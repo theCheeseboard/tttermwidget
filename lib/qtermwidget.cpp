@@ -21,6 +21,7 @@
 #include <QtDebug>
 #include <QDir>
 #include <QMessageBox>
+#include <signal.h>
 
 #include "ColorTables.h"
 #include "Session.h"
@@ -524,6 +525,17 @@ void QTermWidget::resizeEvent(QResizeEvent*)
 {
 //qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());
     m_impl->m_terminalDisplay->resize(this->size());
+
+    QStringList env = m_impl->m_session->environment();
+    for (QString str : env) {
+        if (str.startsWith("LINES") || str.startsWith("COLUMNS")) {
+            env.removeOne(str);
+        }
+    }
+
+    env.append("LINES=" + QString::number(screenLinesCount()));
+    env.append("COLUMNS=" + QString::number(screenColumnsCount()));
+    m_impl->m_session->setEnvironment(env);
 }
 
 
@@ -764,4 +776,19 @@ void QTermWidget::cursorChanged(Konsole::Emulation::KeyboardCursorShape cursorSh
     // TODO: A switch to enable/disable DECSCUSR?
     setKeyboardCursorShape(cursorShape);
     setBlinkingCursor(blinkingCursorEnabled);
+}
+
+int QTermWidget::fontHeight() {
+    return m_impl->m_terminalDisplay->fontHeight();
+}
+
+void QTermWidget::setFixedHeight(int h) {
+    QSize oldSize = this->size();
+    QWidget::setFixedHeight(h);
+    QResizeEvent e(this->size(), oldSize);
+    this->resizeEvent(&e);
+
+    if (m_impl->m_session->isRunning()) {
+        kill(getShellPID(), SIGWINCH);
+    }
 }

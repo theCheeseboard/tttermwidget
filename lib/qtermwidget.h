@@ -221,6 +221,8 @@ public:
 
     /** change and wrap text corresponding to paste mode **/
     void bracketText(QString& text);
+
+    int fontHeight();
 signals:
     void finished();
     void shellProgramFinished(int exitCode);
@@ -281,6 +283,8 @@ public slots:
     void clear();
 
     void toggleShowSearchBar();
+
+    void setFixedHeight(int h);
 
 protected:
     virtual void resizeEvent(QResizeEvent *);

@@ -1736,6 +1736,13 @@ void TerminalDisplay::blinkCursorEvent()
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
+void TerminalDisplay::resize(const QSize &size) {
+    QSize oldSize = this->size();
+    QWidget::resize(size);
+    QResizeEvent e(size, oldSize);
+    this->resizeEvent(&e);
+}
+
 void TerminalDisplay::resizeEvent(QResizeEvent*)
 {
   updateImageSize();

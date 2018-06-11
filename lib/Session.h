@@ -567,6 +567,8 @@ private:
 
     QString        _profileKey;
 
+    int            fontHeight;
+
     bool _hasDarkBackground;
 
     static int lastSessionId;

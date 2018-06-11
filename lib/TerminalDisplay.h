@@ -504,6 +504,8 @@ public slots:
 
     void selectionChanged();
 
+    void resize(const QSize& size);
+
 signals:
 
     /**
