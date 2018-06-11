@@ -587,6 +587,7 @@ QString Session::profileKey() const
 
 void Session::done(int exitStatus)
 {
+    emit shellProcessDone(exitStatus);
     if (!_autoClose) {
         _userTitle = ("This session is done. Finished");
         emit titleChanged();

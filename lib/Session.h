@@ -409,9 +409,14 @@ signals:
     void started();
 
     /**
-     * Emitted when the terminal process exits.
+     * Emitted when the session ends.
      */
     void finished();
+
+    /**
+     * Emitted when the terminal process exits.
+     */
+    void shellProcessDone(int exitCode);
 
     /**
      * Emitted when output is received from the terminal process.

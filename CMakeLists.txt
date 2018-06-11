@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
-project(qtermwidget)
+project(tttermwidget)
 
 include(GNUInstallDirs)
 include(GenerateExportHeader)
@@ -41,7 +41,7 @@ include(LXQtTranslateTs)
 include(LXQtCompilerSettings NO_POLICY_SCOPE)
 include(LXQtCreatePkgConfigFile)
 
-set(QTERMWIDGET_LIBRARY_NAME qtermwidget5)
+set(QTERMWIDGET_LIBRARY_NAME tttermwidget)
 
 option(USE_UTF8PROC "Use libutf8proc for better Unicode support. Default OFF" OFF)
 

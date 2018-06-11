@@ -223,6 +223,7 @@ public:
     void bracketText(QString& text);
 signals:
     void finished();
+    void shellProgramFinished(int exitCode);
     void copyAvailable(bool);
 
     void termGetFocus();
