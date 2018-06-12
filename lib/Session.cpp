@@ -765,6 +765,10 @@ void Session::setMonitorSilenceSeconds(int seconds)
     }
 }
 
+void Session::write(QByteArray bytes) {
+    _shellProcess->write(bytes);
+}
+
 void Session::setAddToUtmp(bool set)
 {
     _addToUtmp = set;

@@ -213,6 +213,10 @@ void TTTermWidget::changeDir(const QString & dir)
     }
 }
 
+void TTTermWidget::write(QByteArray bytes) {
+    m_impl->m_session->write(bytes);
+}
+
 QSize TTTermWidget::sizeHint() const
 {
     QSize size = m_impl->m_terminalDisplay->sizeHint();
