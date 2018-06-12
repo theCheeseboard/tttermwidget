@@ -45,25 +45,25 @@ void *createTermWidget(int startnow, void *parent)
 }
 
 struct TermWidgetImpl {
-    TermWidgetImpl(QWidget* parent = 0);
+    TermWidgetImpl(bool connectPtyData, QWidget* parent = 0);
 
     TerminalDisplay *m_terminalDisplay;
     Session *m_session;
 
-    Session* createSession(QWidget* parent);
+    Session* createSession(bool connectPtyData, QWidget* parent);
     TerminalDisplay* createTerminalDisplay(Session *session, QWidget* parent);
 };
 
-TermWidgetImpl::TermWidgetImpl(QWidget* parent)
+TermWidgetImpl::TermWidgetImpl(bool connectPtyData, QWidget* parent)
 {
-    this->m_session = createSession(parent);
+    this->m_session = createSession(connectPtyData, parent);
     this->m_terminalDisplay = createTerminalDisplay(this->m_session, parent);
 }
 
 
-Session *TermWidgetImpl::createSession(QWidget* parent)
+Session *TermWidgetImpl::createSession(bool connectPtyData, QWidget* parent)
 {
-    Session *session = new Session(parent);
+    Session *session = new Session(connectPtyData, parent);
 
     session->setTitle(Session::NameRole, "TTTermWidget");
 
@@ -111,16 +111,16 @@ TerminalDisplay *TermWidgetImpl::createTerminalDisplay(Session *session, QWidget
 }
 
 
-TTTermWidget::TTTermWidget(int startnow, QWidget *parent)
+TTTermWidget::TTTermWidget(int startnow, bool connectPtyData, QWidget *parent)
     : QWidget(parent)
 {
-    init(startnow);
+    init(connectPtyData, startnow);
 }
 
 TTTermWidget::TTTermWidget(QWidget *parent)
     : QWidget(parent)
 {
-    init(1);
+    init(true, 1);
 }
 
 void TTTermWidget::selectionChanged(bool textSelected)
@@ -259,7 +259,7 @@ void TTTermWidget::startTerminalTeletype()
              this, SIGNAL(sendData(const char *,int)) );
 }
 
-void TTTermWidget::init(int startnow)
+void TTTermWidget::init(bool connectPtyData, int startnow)
 {
     m_layout = new QVBoxLayout();
     m_layout->setMargin(0);
@@ -286,7 +286,7 @@ void TTTermWidget::init(int startnow)
         }
     }
 
-    m_impl = new TermWidgetImpl(this);
+    m_impl = new TermWidgetImpl(connectPtyData, this);
     m_layout->addWidget(m_impl->m_terminalDisplay);
 
     connect(m_impl->m_session, SIGNAL(bellRequest(QString)), m_impl->m_terminalDisplay, SLOT(bell(QString)));

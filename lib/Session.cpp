@@ -48,7 +48,7 @@ using namespace Konsole;
 
 int Session::lastSessionId = 0;
 
-Session::Session(QObject* parent) :
+Session::Session(bool connectPtyData, QObject* parent) :
     QObject(parent),
         _shellProcess(0)
         , _emulation(0)
@@ -107,8 +107,10 @@ Session::Session(QObject* parent) :
 
     connect( _shellProcess,SIGNAL(receivedData(const char *,int)),this,
              SLOT(onReceiveBlock(const char *,int)) );
-    connect( _emulation,SIGNAL(sendData(const char *,int)),_shellProcess,
-             SLOT(sendData(const char *,int)) );
+    if (connectPtyData) {
+        connect( _emulation,SIGNAL(sendData(const char *,int)),_shellProcess,
+                 SLOT(sendData(const char *,int)) );
+    }
     connect( _emulation,SIGNAL(lockPtyRequest(bool)),_shellProcess,SLOT(lockPty(bool)) );
     connect( _emulation,SIGNAL(useUtf8Request(bool)),_shellProcess,SLOT(setUtf8Mode(bool)) );
 

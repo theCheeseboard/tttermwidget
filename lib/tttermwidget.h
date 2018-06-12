@@ -52,6 +52,7 @@ public:
 
     //Creation of widget
     TTTermWidget(int startnow, // 1 = start shell programm immediatelly
+                 bool connectPtyData = true, // Whether to connect screen data (disable for piping)
                 QWidget * parent = 0);
     // A dummy constructor for Qt Designer. startnow is 1 by default
     TTTermWidget(QWidget *parent = 0);
@@ -311,7 +312,7 @@ private slots:
 private:
     void search(bool forwards, bool next);
     void setZoom(int step);
-    void init(int startnow);
+    void init(bool connectPtyData, int startnow);
     TermWidgetImpl * m_impl;
     SearchBar* m_searchBar;
     QVBoxLayout *m_layout;

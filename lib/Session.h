@@ -72,7 +72,7 @@ public:
      * falls back to using the program specified in the SHELL environment
      * variable.
      */
-    Session(QObject* parent = 0);
+    Session(bool connectPtyData = true, QObject* parent = 0);
     virtual ~Session();
 
     /**
