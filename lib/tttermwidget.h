@@ -22,6 +22,7 @@
 
 #include <QTranslator>
 #include <QWidget>
+#include <QProcess>
 #include "Emulation.h"
 #include "Filter.h"
 #include "tttermwidget_export.h"
@@ -104,7 +105,7 @@ public:
     //Text codec, default is UTF-8
     void setTextCodec(QTextCodec * codec);
 
-    void write(QByteArray bytes);
+    QProcess* getProcess();
 
     /** @brief Sets the color scheme, default is white on black
      *

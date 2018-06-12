@@ -27,6 +27,7 @@
 
 #include <QStringList>
 #include <QWidget>
+#include <QProcess>
 
 #include "Emulation.h"
 #include "History.h"
@@ -292,8 +293,8 @@ public:
     /** Sends the specified @p signal to the terminal process. */
     bool sendSignal(int signal);
 
-    /** Writes the specified @p signal to the standard input of the terminal process. */
-    void write(QByteArray bytes);
+    /** Returns the terminal process. */
+    QProcess* getProcess();
 
     /**
      * Specifies whether to close the session automatically when the terminal

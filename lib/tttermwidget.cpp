@@ -213,8 +213,8 @@ void TTTermWidget::changeDir(const QString & dir)
     }
 }
 
-void TTTermWidget::write(QByteArray bytes) {
-    m_impl->m_session->write(bytes);
+QProcess* TTTermWidget::getProcess() {
+    return m_impl->m_session->getProcess();
 }
 
 QSize TTTermWidget::sizeHint() const
