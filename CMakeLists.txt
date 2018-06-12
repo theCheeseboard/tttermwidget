@@ -65,7 +65,7 @@ set(SRCS
     lib/kptydevice.cpp
     lib/kptyprocess.cpp
     lib/Pty.cpp
-    lib/qtermwidget.cpp
+    lib/tttermwidget.cpp
     lib/Screen.cpp
     lib/ScreenWindow.cpp
     lib/SearchBar.cpp
@@ -86,7 +86,7 @@ set(HDRS
     lib/kptydevice.h
     lib/kptyprocess.h
     lib/Pty.h
-    lib/qtermwidget.h
+    lib/tttermwidget.h
     lib/ScreenWindow.h
     lib/SearchBar.h
     lib/Session.h
@@ -100,7 +100,7 @@ set(UI
 
 # for distribution
 set(HDRS_DISTRIB
-    lib/qtermwidget.h
+    lib/tttermwidget.h
     lib/Emulation.h
     lib/Filter.h
 )

@@ -5,7 +5,7 @@
 
 class QTcpSocket;
 
-class RemoteTerm : public QTermWidget
+class RemoteTerm : public TTTermWidget
 {
     Q_OBJECT
 public:

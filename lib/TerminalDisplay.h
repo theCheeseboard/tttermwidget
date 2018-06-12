@@ -29,7 +29,7 @@
 // Konsole
 #include "Filter.h"
 #include "Character.h"
-#include "qtermwidget.h"
+#include "tttermwidget.h"
 //#include "konsole_export.h"
 #define KONSOLEPRIVATE_EXPORT
 
@@ -110,7 +110,7 @@ public:
      * Specifies whether the terminal display has a vertical scroll bar, and if so whether it
      * is shown on the left or right side of the display.
      */
-    void setScrollBarPosition(QTermWidget::ScrollBarPosition position);
+    void setScrollBarPosition(TTTermWidget::ScrollBarPosition position);
 
     /**
      * Sets the current position and range of the display's scroll bar.
@@ -205,11 +205,11 @@ public:
      *
      * Defaults to BlockCursor
      */
-    void setKeyboardCursorShape(QTermWidget::KeyboardCursorShape shape);
+    void setKeyboardCursorShape(TTTermWidget::KeyboardCursorShape shape);
     /**
      * Returns the shape of the keyboard cursor.  See setKeyboardCursorShape()
      */
-    QTermWidget::KeyboardCursorShape keyboardCursorShape() const;
+    TTTermWidget::KeyboardCursorShape keyboardCursorShape() const;
 
     /**
      * Sets the color used to draw the keyboard cursor.
@@ -755,7 +755,7 @@ private:
 
     QClipboard*  _clipboard;
     QScrollBar* _scrollBar;
-    QTermWidget::ScrollBarPosition _scrollbarLocation;
+    TTTermWidget::ScrollBarPosition _scrollbarLocation;
     QString     _wordCharacters;
     int         _bellMode;
 
@@ -802,7 +802,7 @@ private:
     TerminalImageFilterChain* _filterChain;
     QRegion _mouseOverHotspotArea;
 
-    QTermWidget::KeyboardCursorShape _cursorShape;
+    TTTermWidget::KeyboardCursorShape _cursorShape;
 
     // custom cursor color.  if this is invalid then the foreground
     // color of the character under the cursor is used

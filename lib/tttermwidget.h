@@ -24,14 +24,13 @@
 #include <QWidget>
 #include "Emulation.h"
 #include "Filter.h"
-#include "qtermwidget_export.h"
 
 class QVBoxLayout;
 struct TermWidgetImpl;
 class SearchBar;
 class QUrl;
 
-class QTERMWIDGET_EXPORT QTermWidget : public QWidget {
+class TTTermWidget : public QWidget {
     Q_OBJECT
 public:
 
@@ -50,12 +49,12 @@ public:
     using KeyboardCursorShape = Konsole::Emulation::KeyboardCursorShape;
 
     //Creation of widget
-    QTermWidget(int startnow, // 1 = start shell programm immediatelly
+    TTTermWidget(int startnow, // 1 = start shell programm immediatelly
                 QWidget * parent = 0);
     // A dummy constructor for Qt Designer. startnow is 1 by default
-    QTermWidget(QWidget *parent = 0);
+    TTTermWidget(QWidget *parent = 0);
 
-    virtual ~QTermWidget();
+    virtual ~TTTermWidget();
 
     //Initial size
     QSize sizeHint() const;
@@ -172,7 +171,7 @@ public:
      *
      * This method may return a nullptr if no hotspot is available.
      *
-     * @param[in] pos The point of interest in the QTermWidget coordinates.
+     * @param[in] pos The point of interest in the TTTermWidget coordinates.
      * @return Hotspot for the given position, or nullptr if no hotspot.
      */
     Filter::HotSpot* getHotSpotAt(const QPoint& pos) const;
@@ -300,7 +299,7 @@ private slots:
     void matchFound(int startColumn, int startLine, int endColumn, int endLine);
     void noMatchFound();
     /**
-     * Emulation::cursorChanged() signal propogates to here and QTermWidget
+     * Emulation::cursorChanged() signal propogates to here and TTTermWidget
      * sends the specified cursor states to the terminal display
      */
     void cursorChanged(Konsole::Emulation::KeyboardCursorShape cursorShape, bool blinkingCursorEnabled);

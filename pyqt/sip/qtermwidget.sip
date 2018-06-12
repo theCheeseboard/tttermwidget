@@ -1,4 +1,4 @@
-%Module QTermWidget
+%Module TTTermWidget
 
 %ModuleHeaderCode
 #pragma GCC visibility push(default)
@@ -8,7 +8,7 @@
 %Import QtCore/QtCoremod.sip
 %Import QtWidgets/QtWidgetsmod.sip
 
-class QTermWidget : QWidget {
+class TTTermWidget : QWidget {
 
 %TypeHeaderCode
 #include <../lib/qtermwidget.h>
@@ -29,8 +29,8 @@ public:
         IBeamCursor=2
     };
 
-    QTermWidget(int startnow = 1, QWidget *parent = 0);
-    ~QTermWidget();
+    TTTermWidget(int startnow = 1, QWidget *parent = 0);
+    ~TTTermWidget();
     void startTerminalTeletype();
     QSize sizeHint() const;
     void setTerminalSizeHint(bool on);
