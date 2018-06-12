@@ -233,7 +233,7 @@ install(EXPORT
 )
 
 install(FILES
-    ${HDRS_DISTRIB} "${CMAKE_CURRENT_BINARY_DIR}/lib/qtermwidget_export.h"
+    ${HDRS_DISTRIB} "${CMAKE_CURRENT_BINARY_DIR}/lib/tttermwidget_export.h"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTERMWIDGET_LIBRARY_NAME}"
     COMPONENT Devel
 )
