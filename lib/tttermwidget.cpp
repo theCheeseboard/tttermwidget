@@ -263,6 +263,7 @@ void TTTermWidget::init(bool connectPtyData, int startnow)
 {
     m_layout = new QVBoxLayout();
     m_layout->setMargin(0);
+    m_layout->setSpacing(0);
     setLayout(m_layout);
 
     // translations
@@ -475,6 +476,15 @@ void TTTermWidget::setColorScheme(const QString& origName)
     ColorEntry table[TABLE_COLORS];
     cs->getColorTable(table);
     m_impl->m_terminalDisplay->setColorTable(table);
+
+    qDebug() << cs->backgroundColor();
+
+    QPalette searchPal = m_searchBar->palette();
+    searchPal.setColor(QPalette::Window, cs->backgroundColor());
+    searchPal.setColor(QPalette::WindowText, cs->foregroundColor());
+    searchPal.setColor(QPalette::Base, cs->backgroundColor());
+    searchPal.setColor(QPalette::Text, cs->foregroundColor());
+    m_searchBar->setPalette(searchPal);
 }
 
 QStringList TTTermWidget::availableColorSchemes()
