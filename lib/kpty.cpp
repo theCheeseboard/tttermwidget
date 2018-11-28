@@ -75,7 +75,7 @@
 
 #ifdef HAVE_LIBUTIL_H
 # include <libutil.h>
-#elif defined(HAVE_UTIL_H)
+#elif defined(HAVE_UTIL_H) | defined(Q_OS_MAC)
 # include <util.h>
 #endif
 
@@ -210,13 +210,13 @@ bool KPty::open()
 
     // We try, as we know them, one by one.
 
-#ifdef HAVE_OPENPTY
+#if defined(HAVE_OPENPTY) | defined(Q_OS_MAC)
 
     char ptsn[PATH_MAX];
     if (::openpty( &d->masterFd, &d->slaveFd, ptsn, 0, 0)) {
         d->masterFd = -1;
         d->slaveFd = -1;
-        qWarning(175) << "Can't open a pseudo teletype";
+        qWarning() << "Can't open a pseudo teletype";
         return false;
     }
     d->ttyName = ptsn;
