@@ -29,6 +29,8 @@ QString get_kb_layout_dir()
     }
 
     // subdir in the app location
+    d.setPath("/usr/share/tttermwidget/kb-layouts/");
+    if (d.exists()) return "/usr/share/tttermwidget/kb-layouts/";
     d.setPath(QCoreApplication::applicationDirPath() + "/kb-layouts/");
     //qDebug() << d.path();
     if (d.exists())
@@ -74,6 +76,8 @@ const QStringList get_color_schemes_dirs()
     if (d.exists())
         rval << k.append("/");
 
+    d.setPath("/usr/share/tttermwidget/color-schemes/");
+    if (d.exists()) rval.append("/usr/share/tttermwidget/color-schemes/");
     // subdir in the app location
     d.setPath(QCoreApplication::applicationDirPath() + "/color-schemes/");
     //qDebug() << d.path();
