@@ -43,6 +43,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QDrag>
+#include <QScroller>
 
 // KDE
 //#include <kshell.h>
@@ -667,10 +668,12 @@ void TerminalDisplay::setKeyboardCursorShape(TTTermWidget::KeyboardCursorShape s
 {
     _cursorShape = shape;
 }
+
 TTTermWidget::KeyboardCursorShape TerminalDisplay::keyboardCursorShape() const
 {
     return _cursorShape;
 }
+
 void TerminalDisplay::setKeyboardCursorColor(bool useForegroundColor, const QColor& color)
 {
     if (useForegroundColor)
@@ -1338,6 +1341,7 @@ void TerminalDisplay::focusOutEvent(QFocusEvent*)
 
     _blinkTimer->stop();
 }
+
 void TerminalDisplay::focusInEvent(QFocusEvent*)
 {
     emit termGetFocus();
@@ -2965,7 +2969,7 @@ void TerminalDisplay::bell(const QString& message)
     }
     else if (_bellMode==NotifyBell)
     {
-        emit notifyBell(message);
+       emit notifyBell(message);
     }
     else if (_bellMode==VisualBell)
     {

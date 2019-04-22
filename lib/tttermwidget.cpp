@@ -298,6 +298,7 @@ void TTTermWidget::init(bool connectPtyData, int startnow)
     connect(m_impl->m_session, SIGNAL(silence()), this, SIGNAL(silence()));
     connect(m_impl->m_session, &Session::profileChangeCommandReceived, this, &TTTermWidget::profileChanged);
     connect(m_impl->m_session, &Session::receivedData, this, &TTTermWidget::receivedData);
+    connect(m_impl->m_session, &Session::flowControlEnabledChanged, this, &TTTermWidget::flowControlEnabledChanged);
 
     // That's OK, FilterChain's dtor takes care of UrlFilter.
     UrlFilter *urlFilter = new UrlFilter();

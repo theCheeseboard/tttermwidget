@@ -262,6 +262,8 @@ signals:
      */
     void receivedData(const QString &text);
 
+    void flowControlEnabledChanged(bool flowControlEnabled);
+
 public slots:
     // Copy selection to clipboard
     void copyClipboard();

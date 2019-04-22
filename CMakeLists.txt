@@ -43,7 +43,7 @@ find_package(Qt5LinguistTools "${REQUIRED_QT_VERSION}" REQUIRED)
 
 set(QTERMWIDGET_LIBRARY_NAME tttermwidget)
 
-option(USE_UTF8PROC "Use libutf8proc for better Unicode support. Default OFF" OFF)
+option(USE_UTF8PROC "Use libutf8proc for better Unicode support. Default OFF" ON)
 
 if(USE_UTF8PROC)
     find_package(Utf8Proc REQUIRED)

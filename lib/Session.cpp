@@ -415,6 +415,7 @@ QString Session::userTitle() const
 {
     return _userTitle;
 }
+
 void Session::setTabTitleFormat(TabTitleContext context , const QString & format)
 {
     if ( context == LocalTabTitle ) {
@@ -423,6 +424,7 @@ void Session::setTabTitleFormat(TabTitleContext context , const QString & format
         _remoteTabTitleFormat = format;
     }
 }
+
 QString Session::tabTitleFormat(TabTitleContext context) const
 {
     if ( context == LocalTabTitle ) {
