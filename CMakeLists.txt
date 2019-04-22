@@ -34,12 +34,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Widgets "${REQUIRED_QT_VERSION}" REQUIRED)
 find_package(Qt5LinguistTools "${REQUIRED_QT_VERSION}" REQUIRED)
-find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
+#find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
 
-include(LXQtPreventInSourceBuilds)
-include(LXQtTranslateTs)
-include(LXQtCompilerSettings NO_POLICY_SCOPE)
-include(LXQtCreatePkgConfigFile)
+#include(LXQtPreventInSourceBuilds)
+#include(LXQtTranslateTs)
+#include(LXQtCompilerSettings NO_POLICY_SCOPE)
+#include(LXQtCreatePkgConfigFile)
 
 set(QTERMWIDGET_LIBRARY_NAME tttermwidget)
 
@@ -123,17 +123,17 @@ qt5_wrap_cpp(MOCS ${HDRS})
 qt5_wrap_ui(UI_SRCS ${UI})
 set(PKG_CONFIG_REQ "Qt5Widgets")
 
-lxqt_translate_ts(QTERMWIDGET_QM
-    TRANSLATION_DIR "lib/translations"
-    UPDATE_TRANSLATIONS
-        ${UPDATE_TRANSLATIONS}
-    SOURCES
-        ${SRCS} ${HDRS} ${UI}
-    INSTALL_DIR
-        ${TRANSLATIONS_DIR}
-    COMPONENT
-        Runtime
-)
+#lxqt_translate_ts(QTERMWIDGET_QM
+#    TRANSLATION_DIR "lib/translations"
+#    UPDATE_TRANSLATIONS
+#        ${UPDATE_TRANSLATIONS}
+#    SOURCES
+#        ${SRCS} ${HDRS} ${UI}
+#    INSTALL_DIR
+#        ${TRANSLATIONS_DIR}
+#    COMPONENT
+#        Runtime
+#)
 
 add_library(${QTERMWIDGET_LIBRARY_NAME} SHARED ${SRCS} ${MOCS} ${UI_SRCS} ${QTERMWIDGET_QM})
 target_link_libraries(${QTERMWIDGET_LIBRARY_NAME} Qt5::Widgets)
@@ -252,17 +252,17 @@ install(DIRECTORY
     FILES_MATCHING PATTERN "*.*schem*"
 )
 
-lxqt_create_pkgconfig_file(
-    PACKAGE_NAME ${QTERMWIDGET_LIBRARY_NAME}
-    DESCRIPTIVE_NAME ${QTERMWIDGET_LIBRARY_NAME}
-    DESCRIPTION "QTermWidget library for Qt ${QTERMWIDGET_VERSION_MAJOR}.x"
-    INCLUDEDIRS ${QTERMWIDGET_LIBRARY_NAME}
-    LIBS ${QTERMWIDGET_LIBRARY_NAME}
-    REQUIRES ${PKG_CONFIG_REQ}
-    VERSION ${QTERMWIDGET_VERSION}
-    INSTALL
-    COMPONENT Devel
-)
+#lxqt_create_pkgconfig_file(
+#    PACKAGE_NAME ${QTERMWIDGET_LIBRARY_NAME}
+#    DESCRIPTIVE_NAME ${QTERMWIDGET_LIBRARY_NAME}
+#    DESCRIPTION "QTermWidget library for Qt ${QTERMWIDGET_VERSION_MAJOR}.x"
+#    INCLUDEDIRS ${QTERMWIDGET_LIBRARY_NAME}
+#    LIBS ${QTERMWIDGET_LIBRARY_NAME}
+#    REQUIRES ${PKG_CONFIG_REQ}
+#    VERSION ${QTERMWIDGET_VERSION}
+#    INSTALL
+#    COMPONENT Devel
+#)
 
 configure_file(
     "${PROJECT_SOURCE_DIR}/cmake/${QTERMWIDGET_LIBRARY_NAME}-config.cmake.in"

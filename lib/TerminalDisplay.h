@@ -554,6 +554,8 @@ signals:
     void notifyBell(const QString&);
     void usesMouseChanged();
 
+    void lineCountChanged(int lineCount);
+
 protected:
     virtual bool event( QEvent * );
 

@@ -243,6 +243,7 @@ signals:
 
     void activity();
     void silence();
+    void lineCountChanged(int lineCount);
 
     /**
      * Emitted when emulator send data to the terminal process

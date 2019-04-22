@@ -1838,6 +1838,8 @@ void TerminalDisplay::scrollBarPositionChanged(int)
 
 void TerminalDisplay::setScroll(int cursor, int slines)
 {
+  emit lineCountChanged(slines);
+
   // update _scrollBar if the range or value has changed,
   // otherwise return
   //

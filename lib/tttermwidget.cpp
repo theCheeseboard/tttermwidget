@@ -292,6 +292,7 @@ void TTTermWidget::init(bool connectPtyData, int startnow)
 
     connect(m_impl->m_session, SIGNAL(bellRequest(QString)), m_impl->m_terminalDisplay, SLOT(bell(QString)));
     connect(m_impl->m_terminalDisplay, SIGNAL(notifyBell(QString)), this, SIGNAL(bell(QString)));
+    connect(m_impl->m_terminalDisplay, SIGNAL(lineCountChanged(int)), this, SIGNAL(lineCountChanged(int)));
 
     connect(m_impl->m_session, SIGNAL(activity()), this, SIGNAL(activity()));
     connect(m_impl->m_session, SIGNAL(silence()), this, SIGNAL(silence()));

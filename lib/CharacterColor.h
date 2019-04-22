@@ -282,7 +282,7 @@ inline QColor CharacterColor::color(const ColorEntry* base) const
     case COLOR_SPACE_UNDEFINED: return QColor();
   }
 
-  Q_ASSERT(false); // invalid color space
+  //Q_ASSERT(false); // invalid color space
 
   return QColor();
 }
