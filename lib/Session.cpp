@@ -208,8 +208,6 @@ void Session::addView(TerminalDisplay * widget)
 
     QObject::connect( widget ,SIGNAL(destroyed(QObject *)) , this ,
                       SLOT(viewDestroyed(QObject *)) );
-//slot for close
-    QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
 
 }
 
@@ -612,6 +610,8 @@ void Session::done(int exitStatus)
             message.sprintf("Session '%s' crashed.",
                           _nameTitle.toUtf8().data());
         }
+
+
     }
 
     if ( !_wantedClose && _shellProcess->exitStatus() != QProcess::NormalExit )
