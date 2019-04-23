@@ -512,10 +512,13 @@ void TTTermWidget::setSize(const QSize &size)
 
 void TTTermWidget::setHistorySize(int lines)
 {
-    if (lines < 0)
+    if (lines < 0) {
         m_impl->m_session->setHistoryType(HistoryTypeFile());
-    else
+    } else if (lines == 0) {
+        m_impl->m_session->setHistoryType(HistoryTypeNone());
+    } else {
         m_impl->m_session->setHistoryType(HistoryTypeBuffer(lines));
+    }
 }
 
 void TTTermWidget::setScrollBarPosition(ScrollBarPosition pos)
