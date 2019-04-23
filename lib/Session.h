@@ -377,6 +377,12 @@ public:
      */
     int getPtySlaveFd() const;
 
+    /**
+     * @brief Checks if there is currently a process running in the shell
+     * @return True if there is a process runnning inside the shell program
+     */
+    bool isBusy();
+
 public slots:
 
     /**

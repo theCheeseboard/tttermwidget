@@ -409,6 +409,8 @@ public:
     // of the character at that point.
     void getCharacterPosition(const QPoint& widgetPoint,int& line,int& column) const;
 
+    void setScrollOnKeypress(bool scrollOnKeypress);
+
 public slots:
 
     /**
@@ -760,6 +762,7 @@ private:
     TTTermWidget::ScrollBarPosition _scrollbarLocation;
     QString     _wordCharacters;
     int         _bellMode;
+    bool _scrollOnKeypress;
 
     bool _blinking;   // hide text in paintEvent
     bool _hasBlinker; // has characters to blink

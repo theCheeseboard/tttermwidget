@@ -341,6 +341,7 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
 ,_scrollbarLocation(TTTermWidget::NoScrollBar)
 ,_wordCharacters(":@-./_~")
 ,_bellMode(SystemBeepBell)
+,_scrollOnKeypress(true)
 ,_blinking(false)
 ,_hasBlinker(false)
 ,_cursorBlinking(false)
@@ -2819,7 +2820,7 @@ void TerminalDisplay::keyPressEvent( QKeyEvent* event )
         }
         else
         {
-            scrollToEnd();
+            if (_scrollOnKeypress) scrollToEnd();
         }
     }
 
@@ -3221,6 +3222,10 @@ void TerminalDisplay::setLineSpacing(uint i)
 {
   _lineSpacing = i;
   setVTFont(font()); // Trigger an update.
+}
+
+void TerminalDisplay::setScrollOnKeypress(bool scrollOnKeypress) {
+    _scrollOnKeypress = scrollOnKeypress;
 }
 
 AutoScrollHandler::AutoScrollHandler(QWidget* parent)

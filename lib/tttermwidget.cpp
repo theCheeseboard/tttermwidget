@@ -532,6 +532,12 @@ void TTTermWidget::scrollToEnd()
     m_impl->m_terminalDisplay->scrollToEnd();
 }
 
+void TTTermWidget::setScrollOnKeypress(bool scrollOnKeypress) {
+    if (!m_impl->m_terminalDisplay)
+        return;
+    m_impl->m_terminalDisplay->setScrollOnKeypress(scrollOnKeypress);
+}
+
 void TTTermWidget::sendText(const QString &text)
 {
     m_impl->m_session->sendText(text);
@@ -807,4 +813,8 @@ void TTTermWidget::setFixedHeight(int h) {
     if (m_impl->m_session->isRunning()) {
         kill(getShellPID(), SIGWINCH);
     }
+}
+
+bool TTTermWidget::isBusy() {
+    return m_impl->m_session->isBusy();
 }

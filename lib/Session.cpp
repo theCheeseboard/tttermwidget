@@ -944,6 +944,15 @@ int Session::getPtySlaveFd() const
 {
     return ptySlaveFd;
 }
+bool Session::isBusy() {
+    //Check if the PID that input is being sent to is the PID of the shell process
+    if (_shellProcess->pid() == _shellProcess->foregroundProcessGroup()) {
+        return false;
+    } else {
+        return true;
+    }
+
+}
 
 SessionGroup::SessionGroup()
         : _masterMode(0)

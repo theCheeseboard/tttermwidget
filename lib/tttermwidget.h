@@ -226,6 +226,10 @@ public:
     /** change and wrap text corresponding to paste mode **/
     void bracketText(QString& text);
 
+    bool isBusy();
+
+    void setScrollOnKeypress(bool scrollOnKeypress);
+
     int fontHeight();
 signals:
     void finished();
