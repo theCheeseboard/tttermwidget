@@ -1,7 +1,7 @@
 # tttermwidget
 Terminal Emulator used in theTerminal
 
-tttermwidget is derived from the work of [QTermWidget][https://github.com/lxqt/qtermwidget].
+tttermwidget is derived from the work of [QTermWidget](https://github.com/lxqt/qtermwidget).
 
 ## Dependencies
 - qmake
