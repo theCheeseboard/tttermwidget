@@ -857,7 +857,7 @@ QStringList TTTermWidget::runningProcesses() {
         children.close();
 
         if (!childrenFile.isEmpty()) {
-            for (QString line : childrenFile.split("\n")) {
+            for (QString line : childrenFile.split(" ")) {
                 pids.push(line.trimmed().toInt());
             }
         }
