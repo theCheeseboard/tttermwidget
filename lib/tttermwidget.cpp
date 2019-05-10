@@ -822,7 +822,7 @@ void TTTermWidget::setFixedHeight(int h) {
 
 bool TTTermWidget::isBusy() {
 #ifdef T_OS_UNIX_NOT_MAC
-    return !runningProcesses().isEmpty();
+    return runningProcesses().count() > 1;
 #else
     return m_impl->m_session->isBusy();
 #endif
