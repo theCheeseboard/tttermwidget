@@ -1,9 +1,9 @@
 QT.tttermwidget.VERSION = 1.0
 QT.tttermwidget.MAJOR_VERSION = 1
 QT.tttermwidget.MINOR_VERSION = 1
-QT.tttermwidget.name = the-libs
-QT.tttermwidget.module = the-libs
-QT.tttermwidget.depends = core dbus
+QT.tttermwidget.name = tttermwidget
+QT.tttermwidget.module = tttermwidget
+QT.tttermwidget.depends = core dbus the-libs
 QT.tttermwidget.includes = /usr/include/tttermwidget/
 QT.tttermwidget.libs = $$QT_MODULE_LIB_BASE
 QT_MODULES += tttermwidget
