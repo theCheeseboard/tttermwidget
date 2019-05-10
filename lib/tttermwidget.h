@@ -17,8 +17,8 @@
 */
 
 
-#ifndef _Q_TERM_WIDGET
-#define _Q_TERM_WIDGET
+#ifndef TTTERMWIDGET_H
+#define TTTERMWIDGET_H
 
 #include <QTranslator>
 #include <QWidget>

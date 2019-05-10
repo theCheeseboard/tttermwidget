@@ -94,7 +94,7 @@ unix:!macx {
     header.path = /usr/include/tttermwidget
     header.files = lib/tttermwidget.h lib/Emulation.h lib/Filter.h
 
-    module.files = qt_thelib.pri
+    module.files = qt_tttermwidget.pri
     module.path = $$[QMAKE_MKSPECS]/modules
 
     INSTALLS = target translations colorschemes kblayouts header module
