@@ -32,7 +32,13 @@ struct TermWidgetImpl;
 class SearchBar;
 class QUrl;
 
-class QTERMWIDGET_EXPORT TTTermWidget : public QWidget {
+#if defined(TTTERMWIDGET_LIBRARY)
+#  define TTTERMWIDGET_EXPORT Q_DECL_EXPORT
+#else
+#  define TTTERMWIDGET_EXPORT Q_DECL_IMPORT
+#endif
+
+class TTTERMWIDGET_EXPORT TTTermWidget : public QWidget {
     Q_OBJECT
 public:
 

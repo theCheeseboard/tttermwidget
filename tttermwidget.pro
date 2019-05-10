@@ -10,6 +10,7 @@ CONFIG   += c++14
 TARGET = tttermwidget
 TEMPLATE = lib
 
+DEFINES += TTTERMWIDGET_LIBRARY
 
 system("pkg-config --version") {
     CONFIG += link_pkgconfig
