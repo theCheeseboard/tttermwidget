@@ -227,6 +227,7 @@ public:
     void bracketText(QString& text);
 
     bool isBusy();
+    QStringList runningProcesses();
 
     void setScrollOnKeypress(bool scrollOnKeypress);
 

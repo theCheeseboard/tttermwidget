@@ -951,7 +951,6 @@ bool Session::isBusy() {
     } else {
         return true;
     }
-
 }
 
 SessionGroup::SessionGroup()

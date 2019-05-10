@@ -821,3 +821,41 @@ void TTTermWidget::setFixedHeight(int h) {
 bool TTTermWidget::isBusy() {
     return m_impl->m_session->isBusy();
 }
+
+QStringList TTTermWidget::runningProcesses() {
+    QStringList children;
+#ifdef T_OS_UNIX_NOT_MAC
+    QStack<int> pids;
+    pids.push(this->getShellPID());
+    while (pids.count() != 0) {
+        int pid = pids.pop();
+        //Get the name of this process
+        QFile status(QString("/proc/%1/status").arg(pid));
+        status.open(QFile::ReadOnly);
+        QString statusFile = status.readAll();
+        status.close();
+
+        QStringList statusFileLines = statusFile.split("\n");
+        for (QString line : statusFileLines) {
+            QStringList parts = line.split(":");
+            if (parts.first() == "Name") {
+                children.append(parts.value(1).trimmed());
+                break;
+            }
+        }
+
+        //Get the children of this process
+        QFile children(QString("/proc/%1/task/%1/children").arg(pid));
+        children.open(QFile::ReadOnly);
+        QString childrenFile = children.readAll();
+        children.close();
+
+        if (!childrenFile.isEmpty()) {
+            for (QString line : childrenFile.split("\n")) {
+                pids.push(line.trimmed().toInt());
+            }
+        }
+    }
+#endif
+    return children;
+}
