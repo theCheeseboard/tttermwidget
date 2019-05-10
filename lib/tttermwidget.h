@@ -25,7 +25,6 @@
 #include <QProcess>
 #include "Emulation.h"
 #include "Filter.h"
-#include "tttermwidget_export.h"
 
 class QVBoxLayout;
 struct TermWidgetImpl;
