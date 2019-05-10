@@ -16,11 +16,13 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <the-libs_global.h>
 #include <QLayout>
 #include <QBoxLayout>
 #include <QtDebug>
 #include <QDir>
 #include <QMessageBox>
+#include <QStack>
 #include <signal.h>
 
 #include "ColorTables.h"
@@ -819,7 +821,11 @@ void TTTermWidget::setFixedHeight(int h) {
 }
 
 bool TTTermWidget::isBusy() {
+#ifdef T_OS_UNIX_NOT_MAC
+    return runningProcesses().isEmpty();
+#else
     return m_impl->m_session->isBusy();
+#endif
 }
 
 QStringList TTTermWidget::runningProcesses() {

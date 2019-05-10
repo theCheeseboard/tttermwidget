@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets multimedia
+QT       += widgets multimedia thelib
 CONFIG   += c++14
 
 TARGET = tttermwidget
