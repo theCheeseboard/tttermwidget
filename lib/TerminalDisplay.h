@@ -667,10 +667,6 @@ private:
     // the area where the preedit string for input methods will be draw
     QRect preeditRect() const;
 
-    // shows a notification window in the middle of the widget indicating the terminal's
-    // current size in columns and lines
-    void showResizeNotification();
-
     // scrolls the image by a number of lines.
     // 'lines' may be positive ( to scroll the image down )
     // or negative ( to scroll the image up )
@@ -781,10 +777,6 @@ private:
 
     bool _possibleTripleClick;  // is set in mouseDoubleClickEvent and deleted
                                // after QApplication::doubleClickInterval() delay
-
-
-    QLabel* _resizeWidget;
-    QTimer* _resizeTimer;
 
     bool _flowControlWarningEnabled;
 

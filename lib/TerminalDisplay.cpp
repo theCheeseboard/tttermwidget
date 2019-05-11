@@ -351,8 +351,6 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
 ,_tripleClickMode(SelectWholeLine)
 ,_isFixedSize(false)
 ,_possibleTripleClick(false)
-,_resizeWidget(0)
-,_resizeTimer(0)
 ,_flowControlWarningEnabled(false)
 ,_outputSuspendedLabel(0)
 ,_lineSpacing(0)
@@ -946,10 +944,6 @@ void TerminalDisplay::scrollImage(int lines , const QRect& screenWindowRegion)
          || (region.top() + abs(lines)) >= region.bottom()
          || this->_lines <= region.height() ) return;
 
-    // hide terminal size label to prevent it being scrolled
-    if (_resizeWidget && _resizeWidget->isVisible())
-        _resizeWidget->hide();
-
     // Note:  With Qt 4.4 the left edge of the scrolled area must be at 0
     // to get the correct (newly exposed) part of the widget repainted.
     //
@@ -1264,36 +1258,6 @@ void TerminalDisplay::updateImage()
   delete[] dirtyMask;
   delete[] disstrU;
 
-}
-
-void TerminalDisplay::showResizeNotification()
-{
-  if (_terminalSizeHint && isVisible())
-  {
-     if (_terminalSizeStartup) {
-               _terminalSizeStartup=false;
-       return;
-     }
-     if (!_resizeWidget)
-     {
-         const QString label = tr("Size: XXX x XXX");
-        _resizeWidget = new QLabel(label, this);
-        _resizeWidget->setMinimumWidth(_resizeWidget->fontMetrics().width(label));
-        _resizeWidget->setMinimumHeight(_resizeWidget->sizeHint().height());
-        _resizeWidget->setAlignment(Qt::AlignCenter);
-
-        _resizeWidget->setStyleSheet("background-color:palette(window);border-style:solid;border-width:1px;border-color:palette(dark)");
-
-        _resizeTimer = new QTimer(this);
-        _resizeTimer->setSingleShot(true);
-        connect(_resizeTimer, SIGNAL(timeout()), _resizeWidget, SLOT(hide()));
-     }
-     _resizeWidget->setText(tr("Size: %1 x %2").arg(_columns).arg(_lines));
-     _resizeWidget->move((width()-_resizeWidget->width())/2,
-                         (height()-_resizeWidget->height())/2+20);
-     _resizeWidget->show();
-     _resizeTimer->start(1000);
-  }
 }
 
 void TerminalDisplay::setBlinkingCursor(bool blink)
@@ -1797,7 +1761,6 @@ void TerminalDisplay::updateImageSize()
 
   if ( _resizing )
   {
-      showResizeNotification();
     emit changedContentSizeSignal(_contentHeight, _contentWidth); // expose resizeEvent
   }
 

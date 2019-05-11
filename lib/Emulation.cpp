@@ -159,7 +159,7 @@ void Emulation::setCodec(const QTextCodec * qtc)
   if (qtc)
       _codec = qtc;
   else
-     setCodec(LocaleCodec);
+     setCodec(Utf8Codec);
 
   delete _decoder;
   _decoder = _codec->makeDecoder();
@@ -170,7 +170,7 @@ void Emulation::setCodec(const QTextCodec * qtc)
 void Emulation::setCodec(EmulationCodec codec)
 {
     if ( codec == Utf8Codec )
-        setCodec( QTextCodec::codecForName("utf8") );
+        setCodec( QTextCodec::codecForName("UTF-8") );
     else if ( codec == LocaleCodec )
         setCodec( QTextCodec::codecForLocale() );
 }
