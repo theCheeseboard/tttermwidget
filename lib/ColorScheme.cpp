@@ -31,6 +31,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QRegularExpression>
+#include <QApplication>
 
 
 // KDE
@@ -273,11 +274,9 @@ qreal ColorScheme::opacity() const { return _opacity; }
 void ColorScheme::read(const QString & fileName)
 {
     QSettings s(fileName, QSettings::IniFormat);
-    s.beginGroup("General");
 
-    _description = s.value("Description", QObject::tr("Un-named Color Scheme")).toString();
+    _description = s.value("Description", QApplication::translate("ColorScheme", "Unnamed Color Scheme")).toString();
     _opacity = s.value("Opacity",qreal(1.0)).toDouble();
-    s.endGroup();
 
     for (int i=0 ; i < TABLE_COLORS ; i++)
     {
@@ -457,38 +456,7 @@ void ColorScheme::writeColorEntry(KConfig& config , const QString& colorName, co
 AccessibleColorScheme::AccessibleColorScheme()
     : ColorScheme()
 {
-#if 0
-// It's not finished in konsole and it breaks Qt4 compilation as well
-    // basic attributes
-    setName("accessible");
-    setDescription(QObject::tr("Accessible Color Scheme"));
 
-    // setup colors
-    const int ColorRoleCount = 8;
-
-    const KColorScheme colorScheme(QPalette::Active);
-
-    QBrush colors[ColorRoleCount] =
-    {
-        colorScheme.foreground( colorScheme.NormalText ),
-        colorScheme.background( colorScheme.NormalBackground ),
-
-        colorScheme.foreground( colorScheme.InactiveText ),
-        colorScheme.foreground( colorScheme.ActiveText ),
-        colorScheme.foreground( colorScheme.LinkText ),
-        colorScheme.foreground( colorScheme.VisitedText ),
-        colorScheme.foreground( colorScheme.NegativeText ),
-        colorScheme.foreground( colorScheme.NeutralText )
-    };
-
-    for ( int i = 0 ; i < TABLE_COLORS ; i++ )
-    {
-        ColorEntry entry;
-        entry.color = colors[ i % ColorRoleCount ].color();
-
-        setColorTableEntry( i , entry );
-    }
-#endif
 }
 
 KDE3ColorSchemeReader::KDE3ColorSchemeReader( QIODevice* device ) :

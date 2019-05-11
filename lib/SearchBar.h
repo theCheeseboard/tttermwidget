@@ -48,7 +48,6 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent* keyEvent);
 
 private slots:
-    void clearBackgroundColor();
 
 private:
     Ui::SearchBar widget;

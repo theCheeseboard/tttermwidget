@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>399</width>
-    <height>38</height>
+    <height>61</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SearchBar</string>
+   <string notr="true">SearchBar</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -46,20 +46,20 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="regexErrorLabel">
+     <property name="text">
+      <string notr="true">Invalid Regex</string>
+     </property>
+     <property name="margin">
+      <number>9</number>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="spacing">
       <number>0</number>
      </property>
-     <item>
-      <widget class="QLabel" name="findLabel">
-       <property name="text">
-        <string>Find:</string>
-       </property>
-       <property name="margin">
-        <number>9</number>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QLineEdit" name="searchTextEdit">
        <property name="sizePolicy">
@@ -68,30 +68,42 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
        <property name="frame">
         <bool>false</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Find</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="findPreviousButton">
        <property name="text">
-        <string>&lt;</string>
+        <string notr="true"/>
        </property>
        <property name="icon">
         <iconset theme="go-previous">
          <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="findNextButton">
        <property name="text">
-        <string>&gt;</string>
+        <string notr="true"/>
        </property>
        <property name="icon">
         <iconset theme="go-next">
          <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -107,16 +119,22 @@
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="closeButton">
        <property name="text">
-        <string>X</string>
+        <string notr="true"/>
        </property>
        <property name="icon">
         <iconset theme="dialog-close">
          <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

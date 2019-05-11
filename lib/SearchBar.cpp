@@ -20,18 +20,35 @@
 #include <QAction>
 #include <QRegExp>
 #include <QDebug>
+#include <QRegularExpression>
+#include <terrorflash.h>
 
 #include "SearchBar.h"
 
 SearchBar::SearchBar(QWidget *parent) : QWidget(parent)
 {
     widget.setupUi(this);
+
+    widget.regexErrorLabel->setVisible(false);
+
     connect(widget.closeButton, SIGNAL(clicked()), this, SLOT(hide()));
     connect(widget.searchTextEdit, SIGNAL(textChanged(QString)), this, SIGNAL(searchCriteriaChanged()));
     connect(widget.findPreviousButton, SIGNAL(clicked()), this, SIGNAL(findPrevious()));
-    connect(widget.findNextButton, SIGNAL(clicked()), this, SIGNAL(findNext()));
+    connect(widget.findNextButton, SIGNAL(clicked()), this, SIGNAL(findNext()));    
 
-    connect(this, SIGNAL(searchCriteriaChanged()), this, SLOT(clearBackgroundColor()));
+    connect(this, &SearchBar::searchCriteriaChanged, [=] {
+        if (m_useRegularExpressionMenuEntry->isChecked()) {
+            QRegularExpression searchCriteria(widget.searchTextEdit->text());
+            if (searchCriteria.isValid()) {
+                widget.regexErrorLabel->setVisible(false);
+            } else {
+                widget.regexErrorLabel->setText(searchCriteria.errorString());
+                widget.regexErrorLabel->setVisible(true);
+            }
+        } else {
+            widget.regexErrorLabel->setVisible(false);
+        }
+    });
 
     QMenu *optionsMenu = new QMenu(widget.optionsButton);
     widget.optionsButton->setMenu(optionsMenu);
@@ -84,9 +101,7 @@ void SearchBar::show()
 
 void SearchBar::noMatchFound()
 {
-    QPalette palette;
-    palette.setColor(widget.searchTextEdit->backgroundRole(), QColor(255, 128, 128));
-    widget.searchTextEdit->setPalette(palette);
+    tErrorFlash::flashError(widget.searchTextEdit);
 }
 
 
@@ -107,12 +122,4 @@ void SearchBar::keyReleaseEvent(QKeyEvent* keyEvent)
     {
         hide();
     }
-}
-
-void SearchBar::clearBackgroundColor()
-{
-    QPalette p;
-    p.setColor(QPalette::Base, this->palette().color(QPalette::Base));
-    widget.searchTextEdit->setPalette(p);
-
 }
