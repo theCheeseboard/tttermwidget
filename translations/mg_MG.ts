@@ -20,7 +20,7 @@
 <context>
     <name>Konsole::Vt102Emulation</name>
     <message>
-        <location filename="../lib/Vt102Emulation.cpp" line="1096"/>
+        <location filename="../lib/Vt102Emulation.cpp" line="1102"/>
         <source>No keyboard translator available.  The information needed to convert key presses into characters to send to the terminal is missing.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -79,12 +79,12 @@
 <context>
     <name>TTTermWidget</name>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="476"/>
+        <location filename="../lib/tttermwidget.cpp" line="477"/>
         <source>Color Scheme Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="477"/>
+        <location filename="../lib/tttermwidget.cpp" line="478"/>
         <source>Cannot load color scheme: %1</source>
         <translation type="unfinished"></translation>
     </message>

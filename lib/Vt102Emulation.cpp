@@ -1006,6 +1006,12 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
 {
     Qt::KeyboardModifiers modifiers = event->modifiers();
     KeyboardTranslator::States states = KeyboardTranslator::NoState;
+    Qt::KeyboardModifier controlModifier;
+#ifdef Q_OS_MAC
+    controlModifier = Qt::MetaModifier; //Use the Control key on Macintosh keyboards to send CTRL to terminal
+#else
+    controlModifier = Qt::ControlModifier;
+#endif
 
     // get current states
     if (getMode(MODE_NewLine)  ) states |= KeyboardTranslator::NewLineState;
@@ -1071,7 +1077,7 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
         {
             textToSend += _codec->fromUnicode(entry.text(true,modifiers));
         }
-        else if((modifiers & Qt::ControlModifier) && event->key() >= 0x40 && event->key() < 0x5f) {
+        else if((modifiers & controlModifier) && event->key() >= 0x40 && event->key() < 0x5f) {
             textToSend += (event->key() & 0x1f);
         }
         else if(event->key() == Qt::Key_Tab) {

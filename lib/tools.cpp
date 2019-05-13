@@ -3,7 +3,13 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QtDebug>
+#include <tapplication.h>
 
+#ifdef Q_OS_MAC
+QString getBundleLocation(QString macDir) {
+    return tApplication::macOSBundlePath() + macDir;
+}
+#endif
 
 /*! Helper function to get possible location of layout files.
 By default the KB_LAYOUT_DIR is used (linux/BSD/macports).
@@ -17,7 +23,13 @@ QString get_kb_layout_dir()
 //    qDebug() << __FILE__ << __FUNCTION__;
 
     QString rval = "";
-    QString k(KB_LAYOUT_DIR);
+    QString k;
+#ifdef Q_OS_MAC
+    //Find in the .app bundle
+    k = getBundleLocation(KB_LAYOUT_DIR);
+#else
+    k = KB_LAYOUT_DIR;
+#endif
     QDir d(k);
 
     qDebug() << "default KB_LAYOUT_DIR: " << k;
@@ -68,7 +80,13 @@ const QStringList get_color_schemes_dirs()
 //    qDebug() << __FILE__ << __FUNCTION__;
 
     QStringList rval;
-    QString k(COLORSCHEMES_DIR);
+    QString k;
+#ifdef Q_OS_MAC
+    //Find in the .app bundle
+    k = getBundleLocation(COLORSCHEMES_DIR);
+#else
+    k = COLORSCHEMES_DIR;
+#endif
     QDir d(k);
 
 //    qDebug() << "default COLORSCHEMES_DIR: " << k;

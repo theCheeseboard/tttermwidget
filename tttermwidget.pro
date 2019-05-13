@@ -24,16 +24,26 @@ system("pkg-config --version") {
 }
 
 macx {
+    KB_LAYOUT_DIR = /Contents/Frameworks/tttermwidget.framework/Resources/kb-layouts
+    COLORSCHEMES_DIR = /Contents/Frameworks/tttermwidget.framework/Resources/color-schemes
+    TRANSLATIONS_DIR = /Contents/Frameworks/tttermwidget.framework/Resources/translations
+
+    DEFINES += KB_LAYOUT_DIR="\\\"$$KB_LAYOUT_DIR\\\""
+    DEFINES += COLORSCHEMES_DIR="\\\"$$COLORSCHEMES_DIR\\\""
+    DEFINES += TRANSLATIONS_DIR="\\\"$$TRANSLATIONS_DIR\\\""
     DEFINES += HAVE_UTMPX UTMPX_COMPAT
 }
 
-KB_LAYOUT_DIR = /usr/share/tttermwidget/kb-layouts
-COLORSCHEMES_DIR = /usr/share/tttermwidget/color-schemes
-TRANSLATIONS_DIR = /usr/share/tttermwidget/translations
+unix:!macx {
+    KB_LAYOUT_DIR = /usr/share/tttermwidget/kb-layouts
+    COLORSCHEMES_DIR = /usr/share/tttermwidget/color-schemes
+    TRANSLATIONS_DIR = /usr/share/tttermwidget/translations
+    
+    DEFINES += KB_LAYOUT_DIR="\\\"$$KB_LAYOUT_DIR\\\""
+    DEFINES += COLORSCHEMES_DIR="\\\"$$COLORSCHEMES_DIR\\\""
+    DEFINES += TRANSLATIONS_DIR="\\\"$$TRANSLATIONS_DIR\\\""
+}
 
-DEFINES += KB_LAYOUT_DIR="\\\"$$KB_LAYOUT_DIR\\\""
-DEFINES += COLORSCHEMES_DIR="\\\"$$COLORSCHEMES_DIR\\\""
-DEFINES += TRANSLATIONS_DIR="\\\"$$TRANSLATIONS_DIR\\\""
 DEFINES += HAVE_POSIX_OPENPT HAVE_SYS_TIME_H QT_NO_FOREACH
 
 FORMS += \
@@ -278,6 +288,24 @@ unix:!macx {
     module.path = $$[QMAKE_MKSPECS]/modules
 
     INSTALLS = target translations colorschemes kblayouts header module
+}
+
+macx {
+    CONFIG += lib_bundle
+
+    header.files = lib/tttermwidget.h lib/Emulation.h lib/Filter.h
+    header.path = Headers/tttermwidget
+
+    translations.path = Resources
+    translations.files = translations
+
+    colorschemes.path = Resources
+    colorschemes.files = lib/color-schemes
+
+    kblayouts.path = Resources
+    kblayouts.files = lib/kb-layouts
+
+    QMAKE_BUNDLE_DATA = header translations colorschemes kblayouts
 }
 
 DISTFILES += \

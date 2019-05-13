@@ -92,6 +92,7 @@ Session *TermWidgetImpl::createSession(bool connectPtyData, QWidget* parent)
     session->setHistoryType(HistoryTypeBuffer(1000));
 
     session->setDarkBackground(true);
+    session->setEnvironment({"TERM=xterm-256color"});
 
     session->setKeyBindings("");
     return session;
