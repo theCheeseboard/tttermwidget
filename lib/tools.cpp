@@ -40,13 +40,15 @@ QString get_kb_layout_dir()
         return rval;
     }
 
-    // subdir in the app location
+    // Install location
     d.setPath("/usr/share/tttermwidget/kb-layouts/");
-    if (d.exists()) return "/usr/share/tttermwidget/kb-layouts/";
+    if (d.exists()) return d.path();
+    // AppDir
+    d.setPath(QDir::cleanPath(QApplication::applicationDirPath() + "/../share/tttermwidget/kb-layouts/"));
+    if (d.exists()) return d.path();
+    // subdir in the app location
     d.setPath(QCoreApplication::applicationDirPath() + "/kb-layouts/");
-    //qDebug() << d.path();
-    if (d.exists())
-        return QCoreApplication::applicationDirPath() + "/kb-layouts/";
+    if (d.exists()) return d.path();
 #ifdef Q_WS_MAC
     d.setPath(QCoreApplication::applicationDirPath() + "/../Resources/kb-layouts/");
     if (d.exists())
@@ -94,17 +96,18 @@ const QStringList get_color_schemes_dirs()
     if (d.exists())
         rval << k.append("/");
 
+    // Install location
     d.setPath("/usr/share/tttermwidget/color-schemes/");
-    if (d.exists()) rval.append("/usr/share/tttermwidget/color-schemes/");
+    if (d.exists()) rval << d.path();
+    // AppDir
+    d.setPath(QDir::cleanPath(QApplication::applicationDirPath() + "/../share/tttermwidget/color-schemes/"));
+    if (d.exists()) rval << d.path();
     // subdir in the app location
     d.setPath(QCoreApplication::applicationDirPath() + "/color-schemes/");
-    //qDebug() << d.path();
-    if (d.exists())
-    {
-        if (!rval.isEmpty())
-            rval.clear();
-        rval << (QCoreApplication::applicationDirPath() + "/color-schemes/");
-    }
+    if (d.exists()) rval << d.path();
+
+    rval.removeDuplicates();
+
 #ifdef Q_WS_MAC
     d.setPath(QCoreApplication::applicationDirPath() + "/../Resources/color-schemes/");
     if (d.exists())
