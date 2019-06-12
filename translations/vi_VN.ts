@@ -14,7 +14,7 @@
     <message>
         <location filename="../lib/TerminalDisplay.cpp" line="3150"/>
         <source>&lt;qt&gt;Output has been &lt;a href=&quot;http://en.wikipedia.org/wiki/Flow_control&quot;&gt;suspended&lt;/a&gt; by pressing Ctrl+S.  Press &lt;b&gt;Ctrl+Q&lt;/b&gt; to resume.&lt;/qt&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;qt&gt;Đầu ra đã bị &lt;a href=&quot;http://en.wikipedia.org/wiki/Flow_control&quot;&gt;vô hiệu&lt;/a&gt; vì bạn nhấn CTRL+S.  Nhấn&lt;b&gt;CTRL+Q&lt;/b&gt; để tiếp tục.&lt;/qt&gt;</translation>
     </message>
 </context>
 <context>
@@ -22,7 +22,7 @@
     <message>
         <location filename="../lib/Vt102Emulation.cpp" line="1102"/>
         <source>No keyboard translator available.  The information needed to convert key presses into characters to send to the terminal is missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bộ đích bàn phím không có sẵn.  Thông tin cần đế dịch phím sang ký tự để gửi đến đầu cuối đã bị mất.</translation>
     </message>
 </context>
 <context>
@@ -30,27 +30,27 @@
     <message>
         <location filename="../lib/ColorScheme.cpp" line="292"/>
         <source>Un-named Color Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>Mầu giao diện không có tên</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="518"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở liên kết</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="519"/>
         <source>Copy Link Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Chép địa chỉ liên kết</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="523"/>
         <source>Send Email To...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gửi email đến...</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="524"/>
         <source>Copy Email Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Chép địa chỉ Email</translation>
     </message>
 </context>
 <context>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../lib/tttermwidget.cpp" line="477"/>
         <source>Color Scheme Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Lỗi trong mầu giao diện</translation>
     </message>
     <message>
         <location filename="../lib/tttermwidget.cpp" line="478"/>
         <source>Cannot load color scheme: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Không thể tải mầu giao diện: %1</translation>
     </message>
 </context>
 </TS>
