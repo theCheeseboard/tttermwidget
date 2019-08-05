@@ -1257,7 +1257,6 @@ void TerminalDisplay::updateImage()
   if (!_hasBlinker && _blinkTimer->isActive()) { _blinkTimer->stop(); _blinking = false; }
   delete[] dirtyMask;
   delete[] disstrU;
-
 }
 
 void TerminalDisplay::setBlinkingCursor(bool blink)
@@ -1305,6 +1304,8 @@ void TerminalDisplay::focusOutEvent(QFocusEvent*)
         blinkEvent();
 
     _blinkTimer->stop();
+
+    QGuiApplication::inputMethod()->hide();
 }
 
 void TerminalDisplay::focusInEvent(QFocusEvent*)
@@ -1318,6 +1319,8 @@ void TerminalDisplay::focusInEvent(QFocusEvent*)
 
     if (_hasBlinker)
         _blinkTimer->start();
+
+    QGuiApplication::inputMethod()->show();
 }
 
 void TerminalDisplay::paintEvent( QPaintEvent* pe )
@@ -2265,6 +2268,7 @@ void TerminalDisplay::extendSelection( const QPoint& position )
 
 void TerminalDisplay::mouseReleaseEvent(QMouseEvent* ev)
 {
+    QGuiApplication::inputMethod()->show();
     if ( !_screenWindow )
         return;
 
@@ -2806,16 +2810,15 @@ QVariant TerminalDisplay::inputMethodQuery( Qt::InputMethodQuery query ) const
     const QPoint cursorPos = _screenWindow ? _screenWindow->cursorPosition() : QPoint(0,0);
     switch ( query )
     {
+        case Qt::ImEnabled:
+            return true;
         case Qt::ImMicroFocus:
-                return imageToWidget(QRect(cursorPos.x(),cursorPos.y(),1,1));
-            break;
+            return imageToWidget(QRect(cursorPos.x(),cursorPos.y(),1,1));
         case Qt::ImFont:
-                return font();
-            break;
+            return font();
         case Qt::ImCursorPosition:
-                // return the cursor position within the current line
-                return cursorPos.x();
-            break;
+            // return the cursor position within the current line
+            return cursorPos.x();
         case Qt::ImSurroundingText:
             {
                 // return the text from the current line
@@ -2827,15 +2830,15 @@ QVariant TerminalDisplay::inputMethodQuery( Qt::InputMethodQuery query ) const
                 decoder.end();
                 return lineText;
             }
-            break;
         case Qt::ImCurrentSelection:
-                return QString();
-            break;
+            return QString();
+        case Qt::ImHints:
+            return static_cast<int>(Qt::ImhNoPredictiveText | Qt::ImhNoAutoUppercase);
+        case Qt::ImEnterKeyType:
+            return static_cast<int>(Qt::EnterKeyReturn);
         default:
-            break;
+            return QWidget::inputMethodQuery(query);
     }
-
-    return QVariant();
 }
 
 bool TerminalDisplay::handleShortcutOverrideEvent(QKeyEvent* keyEvent)
