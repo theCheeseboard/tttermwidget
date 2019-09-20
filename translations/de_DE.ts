@@ -12,7 +12,7 @@
 <context>
     <name>Konsole::TerminalDisplay</name>
     <message>
-        <location filename="../lib/TerminalDisplay.cpp" line="3153"/>
+        <location filename="../lib/TerminalDisplay.cpp" line="3164"/>
         <source>&lt;qt&gt;Output has been &lt;a href=&quot;http://en.wikipedia.org/wiki/Flow_control&quot;&gt;suspended&lt;/a&gt; by pressing Ctrl+S.  Press &lt;b&gt;Ctrl+Q&lt;/b&gt; to resume.&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;Ausgabe wurde &lt;a href=&quot;https://de.wikipedia.org/wiki/Datenflusssteuerung&quot;&gt;angehalten&lt;/a&gt; da Stgr+S gedrückt wurde.  Drücke &lt;b&gt;Strg+Q&lt;/b&gt;zum fortsetzen&lt;/qt&gt;</translation>
     </message>

@@ -2505,6 +2505,11 @@ void TerminalDisplay::wheelEvent( QWheelEvent* ev )
   }
 }
 
+void TerminalDisplay::touchEvent(QTouchEvent* event)
+{
+    //TODO: implement better touch screen handling
+}
+
 void TerminalDisplay::tripleClickTimeout()
 {
   _possibleTripleClick=false;
@@ -2897,12 +2902,18 @@ bool TerminalDisplay::event(QEvent* event)
   switch (event->type())
   {
     case QEvent::ShortcutOverride:
-        eventHandled = handleShortcutOverrideEvent((QKeyEvent*)event);
+        eventHandled = handleShortcutOverrideEvent(static_cast<QKeyEvent*>(event));
         break;
     case QEvent::PaletteChange:
     case QEvent::ApplicationPaletteChange:
         _scrollBar->setPalette( QApplication::palette() );
         break;
+    case QEvent::TouchBegin:
+    case QEvent::TouchEnd:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchCancel:
+          touchEvent(static_cast<QTouchEvent*>(event));
+      break;
     default:
         break;
   }

@@ -577,6 +577,7 @@ protected:
     virtual void mouseMoveEvent( QMouseEvent* );
     virtual void extendSelection( const QPoint& pos );
     virtual void wheelEvent( QWheelEvent* );
+    void touchEvent(QTouchEvent* event);
 
     virtual bool focusNextPrevChild( bool next );
 
