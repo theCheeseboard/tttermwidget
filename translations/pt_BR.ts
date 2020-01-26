@@ -79,12 +79,12 @@
 <context>
     <name>TTTermWidget</name>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="477"/>
+        <location filename="../lib/tttermwidget.cpp" line="425"/>
         <source>Color Scheme Error</source>
         <translation>Erro do Esquema de Cores</translation>
     </message>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="478"/>
+        <location filename="../lib/tttermwidget.cpp" line="426"/>
         <source>Cannot load color scheme: %1</source>
         <translation>Não pôde carregar esquema de cores: %1</translation>
     </message>

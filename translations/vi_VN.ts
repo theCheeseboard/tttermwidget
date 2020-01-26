@@ -79,12 +79,12 @@
 <context>
     <name>TTTermWidget</name>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="477"/>
+        <location filename="../lib/tttermwidget.cpp" line="425"/>
         <source>Color Scheme Error</source>
         <translation>Lỗi trong mầu giao diện</translation>
     </message>
     <message>
-        <location filename="../lib/tttermwidget.cpp" line="478"/>
+        <location filename="../lib/tttermwidget.cpp" line="426"/>
         <source>Cannot load color scheme: %1</source>
         <translation>Không thể tải mầu giao diện: %1</translation>
     </message>
