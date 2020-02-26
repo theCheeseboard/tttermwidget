@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" sourcelanguage="en_US">
+<TS version="2.1" sourcelanguage="en_US" language="ja_JP">
 <context>
     <name>ColorScheme</name>
     <message>
         <location filename="../lib/ColorScheme.cpp" line="278"/>
         <source>Unnamed Color Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>名前のないカラースキームです</translation>
     </message>
 </context>
 <context>
@@ -35,22 +35,22 @@
     <message>
         <location filename="../lib/Filter.cpp" line="518"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクを開く</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="519"/>
         <source>Copy Link Address</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクのアドレスをコピーする</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="523"/>
         <source>Send Email To...</source>
-        <translation type="unfinished"></translation>
+        <translation>メールを送信...</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="524"/>
         <source>Copy Email Address</source>
-        <translation type="unfinished"></translation>
+        <translation>メールアドレスをコピー</translation>
     </message>
 </context>
 <context>
@@ -58,22 +58,22 @@
     <message>
         <location filename="../lib/SearchBar.ui" line="78"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>探す</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="56"/>
         <source>Match case</source>
-        <translation type="unfinished"></translation>
+        <translation>マッチケース</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="62"/>
         <source>Regular expression</source>
-        <translation type="unfinished"></translation>
+        <translation>正規表現</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="66"/>
         <source>Highlight all matches</source>
-        <translation type="unfinished"></translation>
+        <translation>すべての一致を強調表示する</translation>
     </message>
 </context>
 <context>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../lib/tttermwidget.cpp" line="477"/>
         <source>Color Scheme Error</source>
-        <translation type="unfinished"></translation>
+        <translation>カラースキームのエラーです</translation>
     </message>
     <message>
         <location filename="../lib/tttermwidget.cpp" line="478"/>
         <source>Cannot load color scheme: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>カラースキームを読み込めません：%1</translation>
     </message>
 </context>
 </TS>
