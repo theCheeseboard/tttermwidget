@@ -108,7 +108,7 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
     *_output << QString::fromStdWString(plainText);
 }
 
-HTMLDecoder::HTMLDecoder() :
+HTMLDecoder::/HTMLDecoder() :
         _output(0)
     ,_colorTable(base_color_table)
        ,_innerSpanOpen(false)
@@ -202,7 +202,7 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
         }
 
         //handle whitespace
-        if (std::iswspace(ch))
+        if (std::isspace(ch))
             spaceCount++;
         else
             spaceCount = 0;
