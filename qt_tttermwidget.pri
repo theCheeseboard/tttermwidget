@@ -4,6 +4,6 @@ QT.tttermwidget.MINOR_VERSION = 1
 QT.tttermwidget.name = tttermwidget
 QT.tttermwidget.module = tttermwidget
 QT.tttermwidget.depends = core dbus thelib
-QT.tttermwidget.includes = /usr/include/tttermwidget/
+QT.tttermwidget.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE
 QT.tttermwidget.libs = $$QT_MODULE_LIB_BASE
 QT_MODULES += tttermwidget

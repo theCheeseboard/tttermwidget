@@ -98,7 +98,7 @@ SOURCES += \
     lib/tttermwidget.cpp
 
 unix:!macx {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]
 
     translations.path = $$TRANSLATIONS_DIR
     translations.files = translations/*
@@ -109,7 +109,7 @@ unix:!macx {
     kblayouts.path = $$KB_LAYOUT_DIR
     kblayouts.files = lib/kb-layouts/*
 
-    header.path = /usr/include/tttermwidget
+    header.path = $$[QT_INSTALL_HEADERS]/tttermwidget
     header.files = lib/tttermwidget.h lib/Emulation.h lib/Filter.h
 
     module.files = qt_tttermwidget.pri

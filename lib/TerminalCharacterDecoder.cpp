@@ -19,6 +19,9 @@
     02110-1301  USA.
 */
 
+// Stl
+#include <cwctype>
+
 // Own
 #include "TerminalCharacterDecoder.h"
 
@@ -33,46 +36,37 @@
 
 using namespace Konsole;
 PlainTextDecoder::PlainTextDecoder()
- : _output(0)
- , _includeTrailingWhitespace(true)
- , _recordLinePositions(false)
-{
+    : _output(0)
+    , _includeTrailingWhitespace(true)
+    , _recordLinePositions(false) {
 
 }
-void PlainTextDecoder::setTrailingWhitespace(bool enable)
-{
+void PlainTextDecoder::setTrailingWhitespace(bool enable) {
     _includeTrailingWhitespace = enable;
 }
-bool PlainTextDecoder::trailingWhitespace() const
-{
+bool PlainTextDecoder::trailingWhitespace() const {
     return _includeTrailingWhitespace;
 }
-void PlainTextDecoder::begin(QTextStream* output)
-{
-   _output = output;
-   if (!_linePositions.isEmpty())
-       _linePositions.clear();
+void PlainTextDecoder::begin(QTextStream* output) {
+    _output = output;
+    if (!_linePositions.isEmpty())
+        _linePositions.clear();
 }
-void PlainTextDecoder::end()
-{
+void PlainTextDecoder::end() {
     _output = 0;
 }
 
-void PlainTextDecoder::setRecordLinePositions(bool record)
-{
+void PlainTextDecoder::setRecordLinePositions(bool record) {
     _recordLinePositions = record;
 }
-QList<int> PlainTextDecoder::linePositions() const
-{
+QList<int> PlainTextDecoder::linePositions() const {
     return _linePositions;
 }
 void PlainTextDecoder::decodeLine(const Character* const characters, int count, LineProperty /*properties*/
-                             )
-{
+) {
     Q_ASSERT( _output );
 
-    if (_recordLinePositions && _output->string())
-    {
+    if (_recordLinePositions && _output->string()) {
         int pos = _output->string()->count();
         _linePositions << pos;
     }
@@ -89,10 +83,8 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
 
     // if inclusion of trailing whitespace is disabled then find the end of the
     // line
-    if ( !_includeTrailingWhitespace )
-    {
-        for (int i = count-1 ; i >= 0 ; i--)
-        {
+    if ( !_includeTrailingWhitespace ) {
+        for (int i = count - 1 ; i >= 0 ; i--) {
             if ( characters[i].character != L' '  )
                 break;
             else
@@ -100,37 +92,33 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
         }
     }
 
-    for (int i=0;i<outputCount;)
-    {
+    for (int i = 0; i < outputCount;) {
         plainText.push_back( characters[i].character );
-        i += qMax(1,konsole_wcwidth(characters[i].character));
+        i += qMax(1, konsole_wcwidth(characters[i].character));
     }
     *_output << QString::fromStdWString(plainText);
 }
 
 HTMLDecoder::HTMLDecoder() :
-        _output(0)
-    ,_colorTable(base_color_table)
-       ,_innerSpanOpen(false)
-       ,_lastRendition(DEFAULT_RENDITION)
-{
+    _output(0)
+    , _colorTable(base_color_table)
+    , _innerSpanOpen(false)
+    , _lastRendition(DEFAULT_RENDITION) {
 
 }
 
-void HTMLDecoder::begin(QTextStream* output)
-{
+void HTMLDecoder::begin(QTextStream* output) {
     _output = output;
 
     std::wstring text;
 
     //open monospace span
-    openSpan(text,"font-family:monospace");
+    openSpan(text, "font-family:monospace");
 
     *output << QString::fromStdWString(text);
 }
 
-void HTMLDecoder::end()
-{
+void HTMLDecoder::end() {
     Q_ASSERT( _output );
 
     std::wstring text;
@@ -145,25 +133,22 @@ void HTMLDecoder::end()
 
 //TODO: Support for LineProperty (mainly double width , double height)
 void HTMLDecoder::decodeLine(const Character* const characters, int count, LineProperty /*properties*/
-                            )
-{
+) {
     Q_ASSERT( _output );
 
     std::wstring text;
 
     int spaceCount = 0;
 
-    for (int i=0;i<count;i++)
-    {
+    for (int i = 0; i < count; i++) {
         wchar_t ch(characters[i].character);
 
         //check if appearance of character is different from previous char
         if ( characters[i].rendition != _lastRendition  ||
-             characters[i].foregroundColor != _lastForeColor  ||
-             characters[i].backgroundColor != _lastBackColor )
-        {
+            characters[i].foregroundColor != _lastForeColor  ||
+            characters[i].backgroundColor != _lastBackColor ) {
             if ( _innerSpanOpen )
-                    closeSpan(text);
+                closeSpan(text);
 
             _lastRendition = characters[i].rendition;
             _lastForeColor = characters[i].foregroundColor;
@@ -183,21 +168,19 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
                 style.append("font-weight:bold;");
 
             if ( _lastRendition & RE_UNDERLINE )
-                    style.append("font-decoration:underline;");
+                style.append("font-decoration:underline;");
 
             //colours - a colour table must have been defined first
-            if ( _colorTable )
-            {
+            if ( _colorTable ) {
                 style.append( QString("color:%1;").arg(_lastForeColor.color(_colorTable).name() ) );
 
-                if (!characters[i].isTransparent(_colorTable))
-                {
+                if (!characters[i].isTransparent(_colorTable)) {
                     style.append( QString("background-color:%1;").arg(_lastBackColor.color(_colorTable).name() ) );
                 }
             }
 
             //open the span with the current style
-            openSpan(text,style);
+            openSpan(text, style);
             _innerSpanOpen = true;
         }
 
@@ -209,18 +192,15 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
 
 
         //output current character
-        if (spaceCount < 2)
-        {
+        if (spaceCount < 2) {
             //escape HTML tag characters and just display others as they are
             if ( ch == '<' )
                 text.append(L"&lt;");
             else if (ch == '>')
-                    text.append(L"&gt;");
+                text.append(L"&gt;");
             else
-                    text.push_back(ch);
-        }
-        else
-        {
+                text.push_back(ch);
+        } else {
             text.append(L"&nbsp;"); //HTML truncates multiple spaces, so use a space marker instead
         }
 
@@ -235,17 +215,14 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
 
     *_output << QString::fromStdWString(text);
 }
-void HTMLDecoder::openSpan(std::wstring& text , const QString& style)
-{
+void HTMLDecoder::openSpan(std::wstring& text, const QString& style) {
     text.append( QString("<span style=\"%1\">").arg(style).toStdWString() );
 }
 
-void HTMLDecoder::closeSpan(std::wstring& text)
-{
+void HTMLDecoder::closeSpan(std::wstring& text) {
     text.append(L"</span>");
 }
 
-void HTMLDecoder::setColorTable(const ColorEntry* table)
-{
+void HTMLDecoder::setColorTable(const ColorEntry* table) {
     _colorTable = table;
 }
