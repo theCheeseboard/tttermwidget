@@ -6,7 +6,7 @@
     <message>
         <location filename="../lib/ColorScheme.cpp" line="278"/>
         <source>Unnamed Color Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>İsimsiz Renk Şeması</translation>
     </message>
 </context>
 <context>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../lib/TerminalDisplay.cpp" line="3164"/>
         <source>&lt;qt&gt;Output has been &lt;a href=&quot;http://en.wikipedia.org/wiki/Flow_control&quot;&gt;suspended&lt;/a&gt; by pressing Ctrl+S.  Press &lt;b&gt;Ctrl+Q&lt;/b&gt; to resume.&lt;/qt&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;qt&gt; Çıktı, Ctrl + S&apos;ye basılarak &lt;a href=&quot;http://en.wikipedia.org/wiki/Flow_control&quot;&gt; askıya alındı &lt;/a&gt;. Devam etmek için &lt;b&gt; Ctrl + Q &lt;/b&gt; tuşlarına basın. &lt;/qt&gt;</translation>
     </message>
 </context>
 <context>
@@ -22,7 +22,7 @@
     <message>
         <location filename="../lib/Vt102Emulation.cpp" line="1102"/>
         <source>No keyboard translator available.  The information needed to convert key presses into characters to send to the terminal is missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Klavye çevirmeni mevcut değil.  Terminale göndermek için tuş vuruşlarını karakterlere dönüştürmek için gereken bilgiler eksik.</translation>
     </message>
 </context>
 <context>
@@ -30,27 +30,27 @@
     <message>
         <location filename="../lib/ColorScheme.cpp" line="292"/>
         <source>Un-named Color Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>İsimsiz Renk Şeması</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="518"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantıyı Aç</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="519"/>
         <source>Copy Link Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Adresini Kopyala</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="523"/>
         <source>Send Email To...</source>
-        <translation type="unfinished"></translation>
+        <translation>E-Posta Gönder...</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="524"/>
         <source>Copy Email Address</source>
-        <translation type="unfinished"></translation>
+        <translation>E-posta Adresini Kopyala</translation>
     </message>
 </context>
 <context>
@@ -58,22 +58,22 @@
     <message>
         <location filename="../lib/SearchBar.ui" line="78"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Bulmak</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="56"/>
         <source>Match case</source>
-        <translation type="unfinished"></translation>
+        <translation>Maç durumda</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="62"/>
         <source>Regular expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenli ifade</translation>
     </message>
     <message>
         <location filename="../lib/SearchBar.cpp" line="66"/>
         <source>Highlight all matches</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm eşleşmeleri vurgula</translation>
     </message>
 </context>
 <context>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../lib/tttermwidget.cpp" line="425"/>
         <source>Color Scheme Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Şeması Hatası</translation>
     </message>
     <message>
         <location filename="../lib/tttermwidget.cpp" line="426"/>
         <source>Cannot load color scheme: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk düzeni yüklenemiyor: %1</translation>
     </message>
 </context>
 </TS>
