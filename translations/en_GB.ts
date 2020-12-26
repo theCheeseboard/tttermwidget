@@ -6,7 +6,7 @@
     <message>
         <location filename="../lib/ColorScheme.cpp" line="278"/>
         <source>Unnamed Color Scheme</source>
-        <translation>Unnamed Color Scheme</translation>
+        <translation>Unnamed Colour Scheme</translation>
     </message>
 </context>
 <context>
@@ -30,7 +30,7 @@
     <message>
         <location filename="../lib/ColorScheme.cpp" line="292"/>
         <source>Un-named Color Scheme</source>
-        <translation>Un-named Color Scheme</translation>
+        <translation>Un-named Colour Scheme</translation>
     </message>
     <message>
         <location filename="../lib/Filter.cpp" line="518"/>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../lib/tttermwidget.cpp" line="425"/>
         <source>Color Scheme Error</source>
-        <translation>Color Scheme Error</translation>
+        <translation>Colour Scheme Error</translation>
     </message>
     <message>
         <location filename="../lib/tttermwidget.cpp" line="426"/>
         <source>Cannot load color scheme: %1</source>
-        <translation>Cannot load color scheme: %1</translation>
+        <translation>Cannot load colour scheme: %1</translation>
     </message>
 </context>
 </TS>
