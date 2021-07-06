@@ -27,6 +27,7 @@ macx {
     # Include the-libs build tools
     # Just generate the translations, we'll put them in the right place ourselves
     include(/usr/local/share/the-libs/pri/gentranslations.pri)
+    include(/usr/local/share/the-libs/pri/varset.pri)
 
     KB_LAYOUT_DIR = /Contents/Frameworks/tttermwidget.framework/Resources/kb-layouts
     COLORSCHEMES_DIR = /Contents/Frameworks/tttermwidget.framework/Resources/color-schemes
@@ -42,6 +43,7 @@ unix:!macx {
     # Include the-libs build tools
     # Just generate the translations, we'll put them in the right place ourselves
     include(/usr/share/the-libs/pri/gentranslations.pri)
+    include(/usr/share/the-libs/pri/varset.pri)
 
     KB_LAYOUT_DIR = /usr/share/tttermwidget/kb-layouts
     COLORSCHEMES_DIR = /usr/share/tttermwidget/color-schemes
@@ -98,10 +100,10 @@ SOURCES += \
     lib/tttermwidget.cpp
 
 unix:!macx {
-    target.path = $$[QT_INSTALL_LIBS]
+    target.path = $$THELIBS_INSTALL_LIB
 
     translations.path = $$TRANSLATIONS_DIR
-    translations.files = translations/*
+    translations.files = $$files(translations/*.qm)
 
     colorschemes.path = $$COLORSCHEMES_DIR
     colorschemes.files = lib/color-schemes/*
