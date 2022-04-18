@@ -1,0 +1,16 @@
+set(tttermwidget_VERSION 2.0.0)
+
+@PACKAGE_INIT@
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+include("${CMAKE_CURRENT_LIST_DIR}/tttermwidgetTargets.cmake")
+
+define_property(TARGET PROPERTY CNTP_DATA_SUBDIR
+    BRIEF_DOCS "Path within data directory to place standard data (usually the application name)"
+    FULL_DOCS "Path within data directory to place standard data (usually the application name)")
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets DBus Svg Network Multimedia PrintSupport)
+cntp_find_pkgconfig(Utf8Proc libutf8proc)
+
+check_required_components(tttermwidget)
