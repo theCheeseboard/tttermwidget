@@ -36,7 +36,8 @@ set(SOURCES
 set(PUBLIC_HEADERS
     lib/tttermwidget.h
     lib/Emulation.h
-    lib/Filter.h)
+    lib/Filter.h
+    lib/KeyboardTranslator.h)
 
 add_library(tttermwidget SHARED ${SOURCES})
 cntp_init(tttermwidget 17)

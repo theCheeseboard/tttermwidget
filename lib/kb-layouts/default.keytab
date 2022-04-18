@@ -33,8 +33,13 @@ key Return-Shift+NewLine : "\r\n"
 key Return+Shift         : "\EOM"
 
 # Backspace and Delete codes are preserving CTRL-H.
+#
+# Backspace without CTRL sends '^H'; this matches XTerm behaviour
+# BS, hex \x08, \b
+key Backspace -Control : "\b"
 
-key Backspace      : "\x7f"
+# Match xterm behaviour: Backspace sends '^?' when Control is pressed
+key Backspace +Control : "\x7f"
 
 # Arrow keys in VT52 mode
 # shift up/down are reserved for scrolling.
@@ -109,6 +114,9 @@ key Delete        +KeyPad : "\E[3~"
 key PgUp    -Shift+KeyPad : "\E[5~"
 key PgDown  -Shift+KeyPad : "\E[6~"
 
+key Clear -AnyMod+KeyPad+AppKeyPad : "\E[OE"
+key Clear +AnyMod+KeyPad+AppKeyPad : "\E[1;*E"
+
 # other grey PC keys
 
 key Enter+NewLine : "\r\n"
@@ -173,4 +181,3 @@ key PgDown  +Shift-AppScreen : scrollPageDown
 key End     +Shift-AppScreen : scrollDownToBottom
 
 key ScrollLock     : scrollLock
-

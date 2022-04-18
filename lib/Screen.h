@@ -94,6 +94,16 @@ public:
      */
     void cursorLeft(int n);
     /**
+     * Moves cursor to beginning of the line by @p n lines down.
+     * The cursor will stop at the beginning of the line.
+     */
+    void cursorNextLine(int n);
+    /**
+     * Moves cursor to beginning of the line by @p n lines up.
+     * The cursor will stop at the beginning of the line.
+     */
+    void cursorPreviousLine(int n);
+    /**
      * Move the cursor to the right by @p n columns.
      * The cursor will stop at the right-most column.
      */
@@ -551,6 +561,8 @@ public:
     static void fillWithDefaultChar(Character* dest, int count);
 
 private:
+    Screen(const Screen &) = delete;
+    Screen &operator=(const Screen &) = delete;
 
     //copies a line of text from the screen or history into a stream using a
     //specified character decoder.  Returns the number of lines actually copied,
@@ -637,8 +649,8 @@ private:
     int _bottomMargin;
 
     // states ----------------
-    int currentModes[MODES_SCREEN];
-    int savedModes[MODES_SCREEN];
+    bool currentModes[MODES_SCREEN];
+    bool savedModes[MODES_SCREEN];
 
     // ----------------------------
 

@@ -62,6 +62,13 @@ namespace Konsole
         MoveEndScreenWindow = 2
     };
 
+    enum BackgroundMode {
+        None,
+        Stretch,
+        Zoom,
+        Fit,
+        Center
+    };
 
 extern unsigned short vt100_graphics[32];
 
@@ -82,8 +89,8 @@ class KONSOLEPRIVATE_EXPORT TerminalDisplay : public QWidget
 
 public:
     /** Constructs a new terminal display widget with the specified parent. */
-    TerminalDisplay(QWidget *parent=0);
-    virtual ~TerminalDisplay();
+    TerminalDisplay(QWidget *parent=nullptr);
+    ~TerminalDisplay() override;
 
     /** Returns the terminal color palette used by the display. */
     const ColorEntry* colorTable() const;
@@ -104,7 +111,10 @@ public:
     void setOpacity(qreal opacity);
 
     /** Sets the background image of the terminal display. */
-    void setBackgroundImage(QString backgroundImage);
+    void setBackgroundImage(const QString& backgroundImage);
+
+    /** Sets the background image mode of the terminal display. */
+    void setBackgroundMode(BackgroundMode mode);
 
     /**
      * Specifies whether the terminal display has a vertical scroll bar, and if so whether it
@@ -188,12 +198,15 @@ public:
     TripleClickMode tripleClickMode() { return _tripleClickMode; }
 
     void setLineSpacing(uint);
+    void setMargin(int);
+
+    int margin() const;
     uint lineSpacing() const;
 
     void emitSelection(bool useXselection,bool appendReturn);
 
     /** change and wrap text corresponding to paste mode **/
-    void bracketText(QString& text);
+    void bracketText(QString& text) const;
 
     /**
      * Sets the shape of the keyboard cursor.  This is the cursor drawn
@@ -263,7 +276,7 @@ public:
     void setFixedSize(int cols, int lins);
 
     // reimplemented
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
     /**
      * Sets which characters, in addition to letters and numbers,
@@ -349,6 +362,12 @@ public:
     static bool antialias()                 { return _antialiasText;   }
 
     /**
+     * Specify whether line chars should be drawn by ourselves or left to
+     * underlying font rendering libraries.
+     */
+    void setDrawLineChars(bool drawLineChars) { _drawLineChars = drawLineChars; }
+
+    /**
      * Specifies whether characters with intense colors should be rendered
      * as bold. Defaults to true.
      */
@@ -404,10 +423,15 @@ public:
 
     void setMotionAfterPasting(MotionAfterPasting action);
     int motionAfterPasting();
+    void setConfirmMultilinePaste(bool confirmMultilinePaste);
+    void setTrimPastedTrailingNewlines(bool trimPastedTrailingNewlines);
 
     // maps a point on the widget to the position ( ie. line and column )
     // of the character at that point.
-    void getCharacterPosition(const QPoint& widgetPoint,int& line,int& column) const;
+    void getCharacterPosition(const QPointF& widgetPoint,int& line,int& column) const;
+
+    void disableBracketedPasteMode(bool disable) { _disabledBracketedPasteMode = disable; }
+    bool bracketedPasteModeIsDisabled() const { return _disabledBracketedPasteMode; }
 
     void setScrollOnKeypress(bool scrollOnKeypress);
 
@@ -513,7 +537,7 @@ signals:
     /**
      * Emitted when the user presses a key whilst the terminal widget has focus.
      */
-    void keyPressedSignal(QKeyEvent *e);
+    void keyPressedSignal(QKeyEvent *e, bool fromPaste);
 
     /**
      * A mouse event occurred.
@@ -559,31 +583,31 @@ signals:
     void lineCountChanged(int lineCount);
 
 protected:
-    virtual bool event( QEvent * );
+    bool event( QEvent * ) override;
 
-    virtual void paintEvent( QPaintEvent * );
+    void paintEvent( QPaintEvent * ) override;
 
-    virtual void showEvent(QShowEvent*);
-    virtual void hideEvent(QHideEvent*);
-    virtual void resizeEvent(QResizeEvent*);
+    void showEvent(QShowEvent*) override;
+    void hideEvent(QHideEvent*) override;
+    void resizeEvent(QResizeEvent*) override;
 
     virtual void fontChange(const QFont &font);
-    virtual void focusInEvent(QFocusEvent* event);
-    virtual void focusOutEvent(QFocusEvent* event);
-    virtual void keyPressEvent(QKeyEvent* event);
-    virtual void mouseDoubleClickEvent(QMouseEvent* ev);
-    virtual void mousePressEvent( QMouseEvent* );
-    virtual void mouseReleaseEvent( QMouseEvent* );
-    virtual void mouseMoveEvent( QMouseEvent* );
+    void focusInEvent(QFocusEvent* event) override;
+    void focusOutEvent(QFocusEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* ev) override;
+    void mousePressEvent( QMouseEvent* ) override;
+    void mouseReleaseEvent( QMouseEvent* ) override;
+    void mouseMoveEvent( QMouseEvent* ) override;
     virtual void extendSelection( const QPoint& pos );
-    virtual void wheelEvent( QWheelEvent* );
+    void wheelEvent( QWheelEvent* ) override;
     void touchEvent(QTouchEvent* event);
 
-    virtual bool focusNextPrevChild( bool next );
+    bool focusNextPrevChild( bool next ) override;
 
     // drag and drop
-    virtual void dragEnterEvent(QDragEnterEvent* event);
-    virtual void dropEvent(QDropEvent* event);
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
     void doDrag();
     enum DragState { diNone, diPending, diDragging };
 
@@ -606,8 +630,8 @@ protected:
     void mouseTripleClickEvent(QMouseEvent* ev);
 
     // reimplemented
-    virtual void inputMethodEvent ( QInputMethodEvent* event );
-    virtual QVariant inputMethodQuery( Qt::InputMethodQuery query ) const;
+    void inputMethodEvent ( QInputMethodEvent* event ) override;
+    QVariant inputMethodQuery( Qt::InputMethodQuery query ) const override;
 
 protected slots:
 
@@ -655,7 +679,7 @@ private:
                                            const Character* style, bool invertCharacterColor);
     // draws a string of line graphics
     void drawLineCharString(QPainter& painter, int x, int y,
-                            const std::wstring& str, const Character* attributes);
+                            const std::wstring& str, const Character* attributes) const;
 
     // draws the preedit string for input methods
     void drawInputMethodPreeditString(QPainter& painter , const QRect& rect);
@@ -696,6 +720,9 @@ private:
     void updateCursor();
 
     bool handleShortcutOverrideEvent(QKeyEvent* event);
+
+    bool isLineChar(wchar_t c) const;
+    bool isLineCharString(const std::wstring& string) const;
 
     // the window onto the terminal screen which this display
     // is currently showing.
@@ -744,6 +771,7 @@ private:
     bool _bidiEnabled;
     bool _mouseMarks;
     bool _bracketedPasteMode;
+    bool _disabledBracketedPasteMode;
 
     QPoint  _iPntSel; // initial selection point
     QPoint  _pntSel; // current selection point
@@ -791,9 +819,10 @@ private:
 
     QSize _size;
 
-    QRgb _blendColor;
+    qreal _opacity;
 
     QPixmap _backgroundImage;
+    BackgroundMode _backgroundMode;
 
     // list of filters currently applied to the display.  used for links and
     // search highlight
@@ -808,6 +837,8 @@ private:
 
 
     MotionAfterPasting mMotionAfterPasting;
+    bool _confirmMultilinePaste;
+    bool _trimPastedTrailingNewlines;
 
     struct InputMethodData
     {
@@ -820,8 +851,11 @@ private:
 
     //the delay in milliseconds between redrawing blinking text
     static const int TEXT_BLINK_DELAY = 500;
-    static const int DEFAULT_LEFT_MARGIN = 1;
-    static const int DEFAULT_TOP_MARGIN = 1;
+
+    int _leftBaseMargin;
+    int _topBaseMargin;
+
+    bool _drawLineChars;
 
 public:
     static void setTransparencyEnabled(bool enable)
@@ -837,8 +871,8 @@ Q_OBJECT
 public:
     AutoScrollHandler(QWidget* parent);
 protected:
-    virtual void timerEvent(QTimerEvent* event);
-    virtual bool eventFilter(QObject* watched,QEvent* event);
+    void timerEvent(QTimerEvent* event) override;
+    bool eventFilter(QObject* watched,QEvent* event) override;
 private:
     QWidget* widget() const { return static_cast<QWidget*>(parent()); }
     int _timerId;

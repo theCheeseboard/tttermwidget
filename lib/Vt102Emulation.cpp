@@ -22,6 +22,7 @@
 
 // Own
 #include "Vt102Emulation.h"
+#include "tools.h"
 
 // XKB
 //#include <config-konsole.h>
@@ -38,13 +39,14 @@
 #endif
 
 // Standard
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
 // Qt
 #include <QEvent>
 #include <QKeyEvent>
 #include <QByteRef>
+#include <QDebug>
 
 // KDE
 //#include <kdebug.h>
@@ -59,6 +61,7 @@ using namespace Konsole;
 
 Vt102Emulation::Vt102Emulation()
     : Emulation(),
+     prevCC(0),
      _titleUpdateTimer(new QTimer(this)),
      _reportFocusEvents(false)
 {
@@ -184,6 +187,7 @@ void Vt102Emulation::resetTokenizer()
   argc = 0;
   argv[0] = 0;
   argv[1] = 0;
+  prevCC = 0;
 }
 
 void Vt102Emulation::addDigit(int digit)
@@ -224,7 +228,7 @@ void Vt102Emulation::initTokenizer()
     charClass[i] |= CTL;
   for(i = 32;i < 256; ++i)
     charClass[i] |= CHR;
-  for(s = (quint8*)"@ABCDGHILMPSTXZbcdfry"; *s; ++s)
+  for(s = (quint8*)"@ABCDEFGHILMPSTXZbcdfry"; *s; ++s)
     charClass[*s] |= CPN;
   // resize = \e[8;<row>;<col>t
   for(s = (quint8*)"t"; *s; ++s)
@@ -269,7 +273,7 @@ void Vt102Emulation::initTokenizer()
 #define egt( )     (p >=  3  && s[2] == '>')
 #define esp( )     (p ==  4  && s[3] == ' ')
 #define Xpe        (tokenBufferPos >= 2 && tokenBuffer[1] == ']')
-#define Xte        (Xpe      && (cc ==  7 || cc == 33))
+#define Xte        (Xpe      && (cc ==  7 || (prevCC == 27 && cc == 92) )) // 27, 92 => "\e\\" (ST, String Terminator)
 #define ces(C)     (cc < 256 && (charClass[cc] & (C)) == (C) && !Xte)
 
 #define CNTL(c) ((c)-'@')
@@ -284,6 +288,13 @@ void Vt102Emulation::receiveChar(wchar_t cc)
 
   if (ces(CTL))
   {
+    // ignore control characters in the text part of Xpe (aka OSC) "ESC]"
+    // escape sequences; this matches what XTERM docs say
+    if (Xpe) {
+        prevCC = cc;
+        return;
+    }
+
     // DEC HACK ALERT! Control Characters are allowed *within* esc sequences in VT100
     // This means, they do neither a resetTokenizer() nor a pushToToken(). Some of them, do
     // of course. Guess this originates from a weakly layered handling of the X-on
@@ -308,7 +319,7 @@ void Vt102Emulation::receiveChar(wchar_t cc)
     if (lec(1,0,ESC+128)) { s[0] = ESC; receiveChar('['); return; }
     if (les(2,1,GRP)) { return; }
     if (Xte         ) { processWindowAttributeChange(); resetTokenizer(); return; }
-    if (Xpe         ) { return; }
+    if (Xpe         ) { prevCC = cc; return; }
     if (lec(3,2,'?')) { return; }
     if (lec(3,2,'>')) { return; }
     if (lec(3,2,'!')) { return; }
@@ -334,7 +345,7 @@ void Vt102Emulation::receiveChar(wchar_t cc)
 
     if (epe(   )) { processToken( TY_CSI_PE(cc), 0, 0); resetTokenizer(); return; }
     if (ees(DIG)) { addDigit(cc-'0'); return; }
-    if (eec(';')) { addArgument();    return; }
+    if (eec(';') || eec(':')) { addArgument(); return; }
     for (int i=0;i<=argc;i++)
     {
         if (epp())
@@ -404,10 +415,10 @@ void Vt102Emulation::processWindowAttributeChange()
     return;
   }
 
-  QString newValue;
-  newValue.reserve(tokenBufferPos-i-2);
-  for (int j = 0; j < tokenBufferPos-i-2; j++)
-    newValue[j] = tokenBuffer[i+1+j];
+  // copy from the first char after ';', and skipping the ending delimiter
+  // 0x07 or 0x92. Note that as control characters in OSC text parts are
+  // ignored, only the second char in ST ("\e\\") is appended to tokenBuffer.
+  QString newValue = QString::fromWCharArray(tokenBuffer + i + 1, tokenBufferPos-i-2);
 
   _pendingTitleUpdates[attributeToChange] = newValue;
   _titleUpdateTimer->start(20);
@@ -655,8 +666,8 @@ void Vt102Emulation::processToken(int token, wchar_t p, int q)
     case TY_CSI_PN('B'      ) : _currentScreen->cursorDown           (p         ); break; //VT100
     case TY_CSI_PN('C'      ) : _currentScreen->cursorRight          (p         ); break; //VT100
     case TY_CSI_PN('D'      ) : _currentScreen->cursorLeft           (p         ); break; //VT100
-    case TY_CSI_PN('E'      ) : /* Not implemented: cursor next p lines */         break; //VT100
-    case TY_CSI_PN('F'      ) : /* Not implemented: cursor preceding p lines */    break; //VT100
+    case TY_CSI_PN('E'      ) : _currentScreen->cursorNextLine       (p         ); break; //VT100
+    case TY_CSI_PN('F'      ) : _currentScreen->cursorPreviousLine   (p         ); break; //VT100
     case TY_CSI_PN('G'      ) : _currentScreen->setCursorX           (p         ); break; //LINUX
     case TY_CSI_PN('H'      ) : _currentScreen->setCursorYX          (p,      q); break; //VT100
     case TY_CSI_PN('I'      ) : _currentScreen->tab                  (p         ); break;
@@ -861,8 +872,12 @@ void Vt102Emulation::sendString(const char* s , int length)
 
 void Vt102Emulation::reportCursorPosition()
 {
-  char tmp[20];
-  sprintf(tmp,"\033[%d;%dR",_currentScreen->getCursorY()+1,_currentScreen->getCursorX()+1);
+  const size_t sz = 20;
+  char tmp[sz];
+  const size_t r = snprintf(tmp, sz, "\033[%d;%dR",_currentScreen->getCursorY()+1,_currentScreen->getCursorX()+1);
+  if (sz <= r) {
+    qWarning("Vt102Emulation::reportCursorPosition: Buffer too small\n");
+  }
   sendString(tmp);
 }
 
@@ -892,8 +907,12 @@ void Vt102Emulation::reportSecondaryAttributes()
 void Vt102Emulation::reportTerminalParms(int p)
 // DECREPTPARM
 {
-  char tmp[100];
-  sprintf(tmp,"\033[%d;1;1;112;112;1;0x",p); // not really true.
+  const size_t sz = 100;
+  char tmp[sz];
+  const size_t r = snprintf(tmp, sz, "\033[%d;1;1;112;112;1;0x",p); // not really true.
+  if (sz <= r) {
+    qWarning("Vt102Emulation::reportTerminalParms: Buffer too small\n");
+  }
   sendString(tmp);
 }
 
@@ -999,10 +1018,10 @@ void Vt102Emulation::sendText( const QString& text )
                     0,
                     Qt::NoModifier,
                     text);
-    sendKeyEvent(&event); // expose as a big fat keypress event
+    sendKeyEvent(&event, false); // expose as a big fat keypress event
   }
 }
-void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
+void Vt102Emulation::sendKeyEvent(QKeyEvent* event, bool fromPaste)
 {
     Qt::KeyboardModifiers modifiers = event->modifiers();
     KeyboardTranslator::States states = KeyboardTranslator::NoState;
@@ -1022,7 +1041,7 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
         states |= KeyboardTranslator::ApplicationKeypadState;
 
     // check flow control state
-    if (modifiers & Qt::ControlModifier)
+    if (modifiers & KeyboardTranslator::CTRL_MOD)
     {
         switch (event->key()) {
         case Qt::Key_S:
@@ -1068,16 +1087,19 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
 
         if ( entry.command() != KeyboardTranslator::NoCommand )
         {
-            if (entry.command() & KeyboardTranslator::EraseCommand)
+            if (entry.command() & KeyboardTranslator::EraseCommand) {
                 textToSend += eraseChar();
+            } else {
+                Q_EMIT handleCommandFromKeyboard(entry.command());
+            }
 
             // TODO command handling
         }
         else if ( !entry.text().isEmpty() )
         {
-            textToSend += _codec->fromUnicode(entry.text(true,modifiers));
+            textToSend += _codec->fromUnicode(QString::fromUtf8(entry.text(true,modifiers)));
         }
-        else if((modifiers & controlModifier) && event->key() >= 0x40 && event->key() < 0x5f) {
+        else if((modifiers & KeyboardTranslator::CTRL_MOD) && event->key() >= 0x40 && event->key() < 0x5f) {
             textToSend += (event->key() & 0x1f);
         }
         else if(event->key() == Qt::Key_Tab) {
@@ -1093,7 +1115,10 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
             textToSend += _codec->fromUnicode(event->text());
         }
 
-        sendData( textToSend.constData() , textToSend.length() );
+        if (!fromPaste && textToSend.length()) {
+            Q_EMIT outputFromKeypressEvent();
+        }
+        Q_EMIT sendData( textToSend.constData() , textToSend.length() );
     }
     else
     {
@@ -1154,7 +1179,7 @@ wchar_t Vt102Emulation::applyCharset(wchar_t c)
 void Vt102Emulation::resetCharset(int scrno)
 {
   _charset[scrno].cu_cs = 0;
-  strncpy(_charset[scrno].charset,"BBBB",4);
+  qstrncpy(_charset[scrno].charset,"BBBB",4);
   _charset[scrno].sa_graphic = false;
   _charset[scrno].sa_pound = false;
   _charset[scrno].graphic = false;
@@ -1338,36 +1363,19 @@ char Vt102Emulation::eraseChar() const
 {
   KeyboardTranslator::Entry entry = _keyTranslator->findEntry(
                                             Qt::Key_Backspace,
-                                            0,
-                                            0);
+                                            Qt::NoModifier,
+                                            KeyboardTranslator::NoState);
   if ( entry.text().count() > 0 )
       return entry.text().at(0);
   else
       return '\b';
 }
 
-// print contents of the scan buffer
-static void hexdump(wchar_t* s, int len)
-{ int i;
-  for (i = 0; i < len; i++)
-  {
-    if (s[i] == '\\')
-      printf("\\\\");
-    else
-    if ((s[i]) > 32 && s[i] < 127)
-      printf("%c",s[i]);
-    else
-      printf("\\%04x(hex)",s[i]);
-  }
-}
-
 void Vt102Emulation::reportDecodingError()
 {
   if (tokenBufferPos == 0 || ( tokenBufferPos == 1 && (tokenBuffer[0] & 0xff) >= 32) )
     return;
-  printf("Undecodable sequence: ");
-  hexdump(tokenBuffer,tokenBufferPos);
-  printf("\n");
+  qCDebug(qtermwidgetLogger) << "Undecodable sequence:" << QString::fromWCharArray(tokenBuffer, tokenBufferPos);
 }
 
 //#include "Vt102Emulation.moc"

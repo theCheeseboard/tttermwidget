@@ -28,25 +28,30 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QIcon::setThemeName("oxygen");
+    QIcon::setThemeName(QStringLiteral("oxygen"));
     QMainWindow *mainWindow = new QMainWindow();
 
     QTermWidget *console = new QTermWidget();
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
-    QMenu *actionsMenu = new QMenu("Actions", menuBar);
+    QMenu *actionsMenu = new QMenu(QStringLiteral("Actions"), menuBar);
     menuBar->addMenu(actionsMenu);
-    actionsMenu->addAction("Find..", console, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
-    actionsMenu->addAction("About Qt", &app, SLOT(aboutQt()));
+    actionsMenu->addAction(QStringLiteral("Find..."), console, &QTermWidget::toggleShowSearchBar,
+                           QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
+    actionsMenu->addAction(QStringLiteral("Copy"), console, &QTermWidget::copyClipboard,
+                           QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_C));
+    actionsMenu->addAction(QStringLiteral("Paste"), console, &QTermWidget::pasteClipboard,
+                           QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_V));
+    actionsMenu->addAction(QStringLiteral("About Qt"), &app, &QApplication::aboutQt);
     mainWindow->setMenuBar(menuBar);
 
     QFont font = QApplication::font();
-#ifdef Q_WS_MAC
-    font.setFamily("Monaco");
+#ifdef Q_OS_MACOS
+    font.setFamily(QStringLiteral("Monaco"));
 #elif defined(Q_WS_QWS)
-    font.setFamily("fixed");
+    font.setFamily(QStringLiteral("fixed"));
 #else
-    font.setFamily("Monospace");
+    font.setFamily(QStringLiteral("Monospace"));
 #endif
     font.setPointSize(12);
 
@@ -75,7 +80,7 @@ int main(int argc, char *argv[])
     qDebug() << "* INFO END *********************";
 
     // real startup
-    QObject::connect(console, SIGNAL(finished()), mainWindow, SLOT(close()));
+    QObject::connect(console, &QTermWidget::finished, mainWindow, &QMainWindow::close);
 
     mainWindow->show();
     return app.exec();

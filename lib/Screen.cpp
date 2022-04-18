@@ -24,11 +24,11 @@
 #include "Screen.h"
 
 // Standard
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <string.h>
-#include <ctype.h>
+#include <cstring>
+#include <cctype>
 
 // Qt
 #include <QTextStream>
@@ -125,6 +125,37 @@ void Screen::cursorLeft(int n)
     if (n == 0) n = 1; // Default
     cuX = qMin(columns-1,cuX); // nowrap!
     cuX = qMax(0,cuX-n);
+}
+
+void Screen::cursorNextLine(int n)
+    //=CNL
+{
+    if (n == 0) {
+        n = 1; // Default
+    }
+    cuX = 0;
+    while (n > 0) {
+        if (cuY < lines - 1) {
+            cuY += 1;
+        }
+        n--;
+    }
+
+}
+
+void Screen::cursorPreviousLine(int n)
+    //=CPL
+{
+    if (n == 0) {
+        n = 1; // Default
+    }
+    cuX = 0;
+    while (n > 0) {
+        if (cuY  > 0) {
+            cuY -= 1;
+        }
+        n--;
+    }
 }
 
 void Screen::cursorRight(int n)
@@ -1359,7 +1390,7 @@ void Screen::setScroll(const HistoryType& t , bool copyPreviousScroll)
     else
     {
         HistoryScroll* oldScroll = history;
-        history = t.scroll(0);
+        history = t.scroll(nullptr);
         delete oldScroll;
     }
 }

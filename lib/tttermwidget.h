@@ -25,9 +25,11 @@
 #include <QProcess>
 #include "Emulation.h"
 #include "Filter.h"
+#include "qtermwidget_export.h"
+#include "qtermwidget_version.h"
 
 class QVBoxLayout;
-struct TermWidgetImpl;
+class TermWidgetImpl;
 class SearchBar;
 class QUrl;
 
@@ -58,17 +60,17 @@ public:
     //Creation of widget
     TTTermWidget(int startnow, // 1 = start shell programm immediatelly
                  bool connectPtyData = true, // Whether to connect screen data (disable for piping)
-                QWidget * parent = 0);
+                QWidget * parent = nullptr);
     // A dummy constructor for Qt Designer. startnow is 1 by default
-    TTTermWidget(QWidget *parent = 0);
+    TTTermWidget(QWidget *parent = nullptr);
 
-    virtual ~TTTermWidget();
+    ~TTTermWidget() override;
 
     //Initial size
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
     // expose TerminalDisplay::TerminalSizeHint, setTerminalSizeHint
-    void setTerminalSizeHint(bool on);
+    void setTerminalSizeHint(bool enabled);
     bool terminalSizeHint();
 
     //start shell program if it was not started in constructor
@@ -93,13 +95,14 @@ public:
     void setTerminalFont(const QFont & font);
     QFont getTerminalFont();
     void setTerminalOpacity(qreal level);
-    void setTerminalBackgroundImage(QString backgroundImage);
+    void setTerminalBackgroundImage(const QString& backgroundImage);
+    void setTerminalBackgroundMode(int mode);
 
     //environment
     void setEnvironment(const QStringList & environment);
 
     //  Shell program, default is /bin/bash
-    void setShellProgram(const QString & progname);
+    void setShellProgram(const QString & program);
 
     //working directory
     void setWorkingDirectory(const QString & dir);
@@ -122,8 +125,16 @@ public:
     static QStringList availableColorSchemes();
     static void addCustomColorSchemeDir(const QString& custom_dir);
 
-    // History size for scrolling
-    void setHistorySize(int lines); //infinite if lines < 0
+    /** Sets the history size (in lines)
+     *
+     * @param lines history size
+     *  lines = 0, no history
+     *  lies < 0, infinite history
+     */
+    void setHistorySize(int lines);
+
+    // Returns the history size (in lines)
+    int historySize() const;
 
     // Presence of scrollbar
     void setScrollBarPosition(ScrollBarPosition);
@@ -133,6 +144,9 @@ public:
 
     // Send some text to terminal
     void sendText(const QString & text);
+
+    // Send key event to terminal
+    void sendKeyEvent(QKeyEvent* e);
 
     // Sets whether flow control is enabled
     void setFlowControlEnabled(bool enabled);
@@ -231,6 +245,23 @@ public:
     /** change and wrap text corresponding to paste mode **/
     void bracketText(QString& text);
 
+    /** forcefully disable bracketed paste mode **/
+    void disableBracketedPasteMode(bool disable);
+    bool bracketedPasteModeIsDisabled() const;
+
+    /** Set the empty space outside the terminal */
+    void setMargin(int);
+
+    /** Get the empty space outside the terminal */
+    int getMargin() const;
+
+    void setDrawLineChars(bool drawLineChars);
+
+    void setBoldIntense(bool boldIntense);
+
+    void setConfirmMultilinePaste(bool confirmMultilinePaste);
+    void setTrimPastedTrailingNewlines(bool trimPastedTrailingNewlines);
+
     bool isBusy();
     QStringList runningProcesses();
 
@@ -301,10 +332,11 @@ public slots:
 
     void toggleShowSearchBar();
 
+    void saveHistory(QIODevice *device);
     void setFixedHeight(int h);
 
 protected:
-    virtual void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *) override;
 
 protected slots:
     void sessionFinished();

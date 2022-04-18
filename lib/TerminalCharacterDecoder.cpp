@@ -34,11 +34,14 @@
 // Konsole
 #include "konsole_wcwidth.h"
 
+#include <cwctype>
+
 using namespace Konsole;
 PlainTextDecoder::PlainTextDecoder()
-    : _output(0)
-    , _includeTrailingWhitespace(true)
-    , _recordLinePositions(false) {
+ : _output(nullptr)
+ , _includeTrailingWhitespace(true)
+ , _recordLinePositions(false)
+{
 
 }
 void PlainTextDecoder::setTrailingWhitespace(bool enable) {
@@ -52,8 +55,9 @@ void PlainTextDecoder::begin(QTextStream* output) {
     if (!_linePositions.isEmpty())
         _linePositions.clear();
 }
-void PlainTextDecoder::end() {
-    _output = 0;
+void PlainTextDecoder::end()
+{
+    _output = nullptr;
 }
 
 void PlainTextDecoder::setRecordLinePositions(bool record) {
@@ -69,6 +73,16 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
     if (_recordLinePositions && _output->string()) {
         int pos = _output->string()->count();
         _linePositions << pos;
+    }
+
+    // check the real length
+    for (int i = 0 ; i < count ; i++)
+    {
+        if (characters + i == nullptr)
+        {
+            count = i;
+            break;
+        }
     }
 
     //TODO should we ignore or respect the LINE_WRAPPED line property?
@@ -100,10 +114,11 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
 }
 
 HTMLDecoder::HTMLDecoder() :
-    _output(0)
-    , _colorTable(base_color_table)
-    , _innerSpanOpen(false)
-    , _lastRendition(DEFAULT_RENDITION) {
+        _output(nullptr)
+    ,_colorTable(base_color_table)
+       ,_innerSpanOpen(false)
+       ,_lastRendition(DEFAULT_RENDITION)
+{
 
 }
 
@@ -113,7 +128,7 @@ void HTMLDecoder::begin(QTextStream* output) {
     std::wstring text;
 
     //open monospace span
-    openSpan(text, "font-family:monospace");
+    openSpan(text,QLatin1String("font-family:monospace"));
 
     *output << QString::fromStdWString(text);
 }
@@ -127,7 +142,7 @@ void HTMLDecoder::end() {
 
     *_output << QString::fromStdWString(text);
 
-    _output = 0;
+    _output = nullptr;
 
 }
 
@@ -165,17 +180,19 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
                 useBold = weight == ColorEntry::Bold;
 
             if (useBold)
-                style.append("font-weight:bold;");
+                style.append(QLatin1String("font-weight:bold;"));
 
             if ( _lastRendition & RE_UNDERLINE )
-                style.append("font-decoration:underline;");
+                    style.append(QLatin1String("font-decoration:underline;"));
 
             //colours - a colour table must have been defined first
-            if ( _colorTable ) {
-                style.append( QString("color:%1;").arg(_lastForeColor.color(_colorTable).name() ) );
+            if ( _colorTable )
+            {
+                style.append( QString::fromLatin1("color:%1;").arg(_lastForeColor.color(_colorTable).name() ) );
 
-                if (!characters[i].isTransparent(_colorTable)) {
-                    style.append( QString("background-color:%1;").arg(_lastBackColor.color(_colorTable).name() ) );
+                if (!characters[i].isTransparent(_colorTable))
+                {
+                    style.append( QString::fromLatin1("background-color:%1;").arg(_lastBackColor.color(_colorTable).name() ) );
                 }
             }
 
@@ -215,8 +232,9 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
 
     *_output << QString::fromStdWString(text);
 }
-void HTMLDecoder::openSpan(std::wstring& text, const QString& style) {
-    text.append( QString("<span style=\"%1\">").arg(style).toStdWString() );
+void HTMLDecoder::openSpan(std::wstring& text , const QString& style)
+{
+    text.append( QString(QLatin1String("<span style=\"%1\">")).arg(style).toStdWString() );
 }
 
 void HTMLDecoder::closeSpan(std::wstring& text) {
