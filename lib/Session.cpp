@@ -156,20 +156,21 @@ void Session::addView(TerminalDisplay* widget) {
         // connect emulation - view signals and slots
         connect(widget, &TerminalDisplay::keyPressedSignal, _emulation,
             &Emulation::sendKeyEvent);
-        connect(widget, SIGNAL(mouseSignal(int, int, int, int)), _emulation,
-            SLOT(sendMouseEvent(int, int, int, int)));
-        connect(widget, SIGNAL(sendStringToEmu(const char*)), _emulation,
-            SLOT(sendString(const char*)));
+        connect(widget, &TerminalDisplay::mouseSignal, _emulation,
+            &Emulation::sendMouseEvent);
+        connect(widget, &TerminalDisplay::sendStringToEmu, _emulation, [=](const char* string) {
+            _emulation->sendString(string);
+        });
 
         // allow emulation to notify view when the foreground process
         // indicates whether or not it is interested in mouse signals
-        connect(_emulation, SIGNAL(programUsesMouseChanged(bool)), widget,
-            SLOT(setUsesMouse(bool)));
+        connect(_emulation, &Emulation::programUsesMouseChanged, widget,
+            &TerminalDisplay::setUsesMouse);
 
         widget->setUsesMouse(_emulation->programUsesMouse());
 
-        connect(_emulation, SIGNAL(programBracketedPasteModeChanged(bool)),
-            widget, SLOT(setBracketedPasteMode(bool)));
+        connect(_emulation, &Emulation::programBracketedPasteModeChanged,
+            widget, &TerminalDisplay::setBracketedPasteMode);
 
         widget->setBracketedPasteMode(_emulation->programBracketedPasteMode());
 
@@ -177,11 +178,11 @@ void Session::addView(TerminalDisplay* widget) {
     }
 
     // connect view signals and slots
-    QObject::connect(widget, SIGNAL(changedContentSizeSignal(int, int)), this,
-        SLOT(onViewSizeChange(int, int)));
+    QObject::connect(widget, &TerminalDisplay::changedContentSizeSignal, this,
+        &Session::onViewSizeChange);
 
-    QObject::connect(widget, SIGNAL(destroyed(QObject*)), this,
-        SLOT(viewDestroyed(QObject*)));
+    QObject::connect(widget, &QObject::destroyed, this,
+        &Session::viewDestroyed);
 }
 
 void Session::viewDestroyed(QObject* view) {

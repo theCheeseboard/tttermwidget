@@ -319,17 +319,17 @@ TerminalDisplay::TerminalDisplay(QWidget* parent) :
         _scrollBar->setAutoFillBackground(true);
     setScroll(0, 0);
     _scrollBar->setCursor(Qt::ArrowCursor);
-    connect(_scrollBar, SIGNAL(valueChanged(int)), this,
-        SLOT(scrollBarPositionChanged(int)));
+    connect(_scrollBar, &QAbstractSlider::valueChanged, this,
+        &TerminalDisplay::scrollBarPositionChanged);
     // qtermwidget: we have to hide it here due the _scrollbarLocation==NoScrollBar
     // check in TerminalDisplay::setScrollBarPosition(ScrollBarPosition position)
     _scrollBar->hide();
 
     // setup timers for blinking cursor and text
     _blinkTimer = new QTimer(this);
-    connect(_blinkTimer, SIGNAL(timeout()), this, SLOT(blinkEvent()));
+    connect(_blinkTimer, &QTimer::timeout, this, &TerminalDisplay::blinkEvent);
     _blinkCursorTimer = new QTimer(this);
-    connect(_blinkCursorTimer, SIGNAL(timeout()), this, SLOT(blinkCursorEvent()));
+    connect(_blinkCursorTimer, &QTimer::timeout, this, &TerminalDisplay::blinkCursorEvent);
 
     //  KCursor::setAutoHideCursor( this, true );
 

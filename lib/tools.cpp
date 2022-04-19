@@ -26,7 +26,7 @@ QString get_kb_layout_dir() {
     // Find in the .app bundle
     k = getBundleLocation(QLatin1String(KB_LAYOUT_DIR));
 #else
-//    k = KB_LAYOUT_DIR;
+    k = KB_LAYOUT_DIR;
 #endif
     QDir d(k);
 
@@ -78,7 +78,7 @@ const QStringList get_color_schemes_dirs() {
     // Find in the .app bundle
     k = getBundleLocation(QLatin1String(COLORSCHEMES_DIR));
 #else
-//    k = COLORSCHEMES_DIR;
+    k = COLORSCHEMES_DIR;
 #endif
     QDir d(k);
 

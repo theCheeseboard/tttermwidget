@@ -162,9 +162,9 @@ void TTTermWidget::search(bool forwards, bool next) {
 
     HistorySearch* historySearch =
         new HistorySearch(m_impl->m_session->emulation(), regExp, forwards, startColumn, startLine, this);
-    connect(historySearch, SIGNAL(matchFound(int, int, int, int)), this, SLOT(matchFound(int, int, int, int)));
-    connect(historySearch, SIGNAL(noMatchFound()), this, SLOT(noMatchFound()));
-    connect(historySearch, SIGNAL(noMatchFound()), m_searchBar, SLOT(noMatchFound()));
+    connect(historySearch, &HistorySearch::matchFound, this, &TTTermWidget::matchFound);
+    connect(historySearch, &HistorySearch::noMatchFound, this, &TTTermWidget::noMatchFound);
+    connect(historySearch, &HistorySearch::noMatchFound, m_searchBar, &SearchBar::noMatchFound);
     historySearch->search();
 }
 
@@ -259,12 +259,12 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
     m_impl = new TermWidgetImpl(connectPtyData, this);
     m_layout->addWidget(m_impl->m_terminalDisplay);
 
-    connect(m_impl->m_session, SIGNAL(bellRequest(QString)), m_impl->m_terminalDisplay, SLOT(bell(QString)));
-    connect(m_impl->m_terminalDisplay, SIGNAL(notifyBell(QString)), this, SIGNAL(bell(QString)));
-    connect(m_impl->m_terminalDisplay, SIGNAL(lineCountChanged(int)), this, SIGNAL(lineCountChanged(int)));
+    connect(m_impl->m_session, &Session::bellRequest, m_impl->m_terminalDisplay, &TerminalDisplay::bell);
+    connect(m_impl->m_terminalDisplay, &TerminalDisplay::notifyBell, this, &TTTermWidget::bell);
+    connect(m_impl->m_terminalDisplay, &TerminalDisplay::lineCountChanged, this, &TTTermWidget::lineCountChanged);
 
-    connect(m_impl->m_session, SIGNAL(activity()), this, SIGNAL(activity()));
-    connect(m_impl->m_session, SIGNAL(silence()), this, SIGNAL(silence()));
+    connect(m_impl->m_session, &Session::activity, this, &TTTermWidget::activity);
+    connect(m_impl->m_session, &Session::silence, this, &TTTermWidget::silence);
     connect(m_impl->m_session, &Session::profileChangeCommandReceived, this, &TTTermWidget::profileChanged);
     connect(m_impl->m_session, &Session::receivedData, this, &TTTermWidget::receivedData);
     connect(m_impl->m_session, &Session::flowControlEnabledChanged, this, &TTTermWidget::flowControlEnabledChanged);
@@ -276,9 +276,9 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
 
     m_searchBar = new SearchBar(this);
     m_searchBar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
-    connect(m_searchBar, SIGNAL(searchCriteriaChanged()), this, SLOT(find()));
-    connect(m_searchBar, SIGNAL(findNext()), this, SLOT(findNext()));
-    connect(m_searchBar, SIGNAL(findPrevious()), this, SLOT(findPrevious()));
+    connect(m_searchBar, &SearchBar::searchCriteriaChanged, this, &TTTermWidget::find);
+    connect(m_searchBar, &SearchBar::findNext, this, &TTTermWidget::findNext);
+    connect(m_searchBar, &SearchBar::findPrevious, this, &TTTermWidget::findPrevious);
     m_layout->addWidget(m_searchBar);
     m_searchBar->hide();
 
@@ -291,12 +291,12 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
     m_impl->m_terminalDisplay->resize(this->size());
 
     this->setFocusProxy(m_impl->m_terminalDisplay);
-    connect(m_impl->m_terminalDisplay, SIGNAL(copyAvailable(bool)),
-        this, SLOT(selectionChanged(bool)));
-    connect(m_impl->m_terminalDisplay, SIGNAL(termGetFocus()),
-        this, SIGNAL(termGetFocus()));
-    connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()),
-        this, SIGNAL(termLostFocus()));
+    connect(m_impl->m_terminalDisplay, &TerminalDisplay::copyAvailable,
+        this, &TTTermWidget::selectionChanged);
+    connect(m_impl->m_terminalDisplay, &TerminalDisplay::termGetFocus,
+        this, &TTTermWidget::termGetFocus);
+    connect(m_impl->m_terminalDisplay, &TerminalDisplay::termLostFocus,
+        this, &TTTermWidget::termLostFocus);
     connect(m_impl->m_terminalDisplay, &TerminalDisplay::keyPressedSignal, this,
         [this](QKeyEvent* e, bool) {
         Q_EMIT termKeyPressed(e);
@@ -315,9 +315,9 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
 
     m_impl->m_session->addView(m_impl->m_terminalDisplay);
 
-    connect(m_impl->m_session, SIGNAL(resizeRequest(QSize)), this, SLOT(setSize(QSize)));
-    connect(m_impl->m_session, SIGNAL(finished()), this, SLOT(sessionFinished()));
-    connect(m_impl->m_session, SIGNAL(shellProcessDone(int)), this, SIGNAL(shellProgramFinished(int)));
+    connect(m_impl->m_session, &Session::resizeRequest, this, &TTTermWidget::setSize);
+    connect(m_impl->m_session, &Session::finished, this, &TTTermWidget::sessionFinished);
+    connect(m_impl->m_session, &Session::shellProcessDone, this, &TTTermWidget::shellProgramFinished);
     connect(m_impl->m_session, &Session::titleChanged, this, &TTTermWidget::titleChanged);
     connect(m_impl->m_session, &Session::cursorChanged, this, &TTTermWidget::cursorChanged);
 }

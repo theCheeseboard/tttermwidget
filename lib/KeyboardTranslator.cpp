@@ -38,6 +38,8 @@
 
 #include "tools.h"
 
+#include <tlogger.h>
+
 // KDE
 //#include <KDebug>
 //#include <KLocale>
@@ -105,7 +107,7 @@ const KeyboardTranslator* KeyboardTranslatorManager::findTranslator(const QStrin
     if (translator != nullptr)
         _translators[name] = translator;
     else if (!name.isEmpty())
-        qDebug() << "Unable to load translator" << name;
+        tDebug("KeyboardTranslatorManager") << "Unable to load translator" << name;
 
     return translator;
 }
@@ -257,12 +259,12 @@ void KeyboardTranslatorReader::readNext() {
             QByteArray text;
 
             // get text or command
-            if (tokens[2].type == Token::OutputText) {
-                text = tokens[2].text.toLocal8Bit();
-            } else if (tokens[2].type == Token::Command) {
+            if (tokens.at(2).type == Token::OutputText) {
+                text = tokens.at(2).text.toLocal8Bit();
+            } else if (tokens.at(2).type == Token::Command) {
                 // identify command
-                if (!parseAsCommand(tokens[2].text, command))
-                    qDebug() << "Command" << tokens[2].text << "not understood.";
+                if (!parseAsCommand(tokens.at(2).text, command))
+                    tDebug("KeyboardTranslatorReader") << "Command" << tokens.at(2).text << "not understood.";
             }
 
             KeyboardTranslator::Entry newEntry;
@@ -414,7 +416,7 @@ bool KeyboardTranslatorReader::parseAsKeyCode(const QString& item, int& keyCode)
         keyCode = sequence[0];
 
         if (sequence.count() > 1) {
-            qDebug() << "Unhandled key codes in sequence: " << item;
+            tDebug("KeyboardTranslatorReader") << "Unhandled key codes in sequence: " << item;
         }
     }
     // additional cases implemented for backwards compatibility with KDE 3
@@ -504,26 +506,27 @@ QList<KeyboardTranslatorReader::Token> KeyboardTranslatorReader::tokenize(const 
 
     if (titleMatch.hasMatch()) {
         Token titleToken = {Token::TitleKeyword, QString()};
-        Token textToken = {Token::TitleText, titleMatch.capturedTexts().at(1)};
+        Token textToken = {Token::TitleText, titleMatch.captured(1)};
 
         list << titleToken << textToken;
     } else if (keyMatch.hasMatch()) {
         Token keyToken = {Token::KeyKeyword, QString()};
-        Token sequenceToken = {Token::KeySequence, keyMatch.capturedTexts().value(1).remove(QLatin1Char(' '))};
+        QString sequence = keyMatch.captured(1);
+        Token sequenceToken = {Token::KeySequence, keyMatch.captured(1).remove(QLatin1Char(' '))};
 
         list << keyToken << sequenceToken;
 
-        if (keyMatch.capturedTexts().at(3).isEmpty()) {
+        if (keyMatch.lastCapturedIndex() == 2) {
             // capturedTexts()[2] is a command
-            Token commandToken = {Token::Command, keyMatch.capturedTexts().at(2)};
+            Token commandToken = {Token::Command, keyMatch.captured(2)};
             list << commandToken;
         } else {
             // capturedTexts()[3] is the output string
-            Token outputToken = {Token::OutputText, keyMatch.capturedTexts().at(3)};
+            Token outputToken = {Token::OutputText, keyMatch.captured(3)};
             list << outputToken;
         }
     } else {
-        qDebug() << "Line in keyboard translator file could not be understood:" << text;
+        tDebug("KeyboardTranslatorReader") << "Line in keyboard translator file could not be understood:" << text;
     }
 
     return list;

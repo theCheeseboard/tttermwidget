@@ -74,7 +74,16 @@ IF(${Utf8Proc_FOUND})
     target_compile_definitions(tttermwidget PRIVATE HAVE_UTF8PROC)
 ENDIF()
 
-target_compile_definitions(tttermwidget PRIVATE HAVE_POSIX_OPENPT HAVE_SYS_TIME_H QT_NO_FOREACH tttermwidget_EXPORTS)
+target_compile_definitions(tttermwidget PRIVATE
+    HAVE_POSIX_OPENPT
+    HAVE_SYS_TIME_H
+    QT_NO_FOREACH
+    tttermwidget_EXPORTS
+
+    KB_LAYOUT_DIR="${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/kb-layouts"
+    COLORSCHEMES_DIR="${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/color-schemes"
+)
+
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKECONFIG_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/tttermwidget.framework/Resources/CMake)
