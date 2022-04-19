@@ -27,55 +27,52 @@
     Boston, MA 02110-1301, USA.
 */
 
-
 #include "kptyprocess.h"
 #include "kprocess.h"
 #include "kptydevice.h"
 
+#include <QDebug>
+#include <csignal>
 #include <cstdlib>
 #include <unistd.h>
-#include <csignal>
-#include <QDebug>
 
-KPtyProcess::KPtyProcess(QObject *parent) :
-    KProcess(new KPtyProcessPrivate, parent)
-{
+KPtyProcess::KPtyProcess(QObject* parent) :
+    KProcess(new KPtyProcessPrivate, parent) {
     Q_D(KPtyProcess);
 
     d->pty = new KPtyDevice(this);
     d->pty->open();
     connect(this, SIGNAL(stateChanged(QProcess::ProcessState)),
-            SLOT(_k_onStateChanged(QProcess::ProcessState)));
+        SLOT(_k_onStateChanged(QProcess::ProcessState)));
+
+    this->initChildProcess();
 }
 
-KPtyProcess::KPtyProcess(int ptyMasterFd, QObject *parent) :
-    KProcess(new KPtyProcessPrivate, parent)
-{
+KPtyProcess::KPtyProcess(int ptyMasterFd, QObject* parent) :
+    KProcess(new KPtyProcessPrivate, parent) {
     Q_D(KPtyProcess);
 
     d->pty = new KPtyDevice(this);
     d->pty->open(ptyMasterFd);
     connect(this, SIGNAL(stateChanged(QProcess::ProcessState)),
-            SLOT(_k_onStateChanged(QProcess::ProcessState)));
+        SLOT(_k_onStateChanged(QProcess::ProcessState)));
+
+    this->initChildProcess();
 }
 
-KPtyProcess::~KPtyProcess()
-{
+KPtyProcess::~KPtyProcess() {
     Q_D(KPtyProcess);
 
-    if (state() != QProcess::NotRunning)
-    {
-        if (d->addUtmp)
-        {
+    if (state() != QProcess::NotRunning) {
+        if (d->addUtmp) {
             d->pty->logout();
             disconnect(SIGNAL(stateChanged(QProcess::ProcessState)),
-                    this, SLOT(_k_onStateChanged(QProcess::ProcessState)));
+                this, SLOT(_k_onStateChanged(QProcess::ProcessState)));
         }
     }
     delete d->pty;
     waitForFinished(300); // give it some time to finish
-    if (state() != QProcess::NotRunning)
-    {
+    if (state() != QProcess::NotRunning) {
         qWarning() << Q_FUNC_INFO << "the terminal process is still running, trying to stop it by SIGHUP";
         ::kill(static_cast<pid_t>(processId()), SIGHUP);
         waitForFinished(300);
@@ -84,61 +81,55 @@ KPtyProcess::~KPtyProcess()
     }
 }
 
-void KPtyProcess::setPtyChannels(PtyChannels channels)
-{
+void KPtyProcess::setPtyChannels(PtyChannels channels) {
     Q_D(KPtyProcess);
 
     d->ptyChannels = channels;
 }
 
-KPtyProcess::PtyChannels KPtyProcess::ptyChannels() const
-{
+KPtyProcess::PtyChannels KPtyProcess::ptyChannels() const {
     Q_D(const KPtyProcess);
 
     return d->ptyChannels;
 }
 
-void KPtyProcess::setUseUtmp(bool value)
-{
+void KPtyProcess::setUseUtmp(bool value) {
     Q_D(KPtyProcess);
 
     d->addUtmp = value;
 }
 
-bool KPtyProcess::isUseUtmp() const
-{
+bool KPtyProcess::isUseUtmp() const {
     Q_D(const KPtyProcess);
 
     return d->addUtmp;
 }
 
-KPtyDevice *KPtyProcess::pty() const
-{
+KPtyDevice* KPtyProcess::pty() const {
     Q_D(const KPtyProcess);
 
     return d->pty;
 }
 
-void KPtyProcess::setupChildProcess()
-{
-    Q_D(KPtyProcess);
+void KPtyProcess::initChildProcess() {
+    this->setChildProcessModifier([this] {
+        Q_D(KPtyProcess);
 
-    d->pty->setCTty();
+        d->pty->setCTty();
 
 #if 0
-    if (d->addUtmp)
-        d->pty->login(KUser(KUser::UseRealUserID).loginName().toLocal8Bit().data(), qgetenv("DISPLAY"));
+        if (d->addUtmp)
+            d->pty->login(KUser(KUser::UseRealUserID).loginName().toLocal8Bit().data(), qgetenv("DISPLAY"));
 #endif
-    if (d->ptyChannels & StdinChannel)
-        dup2(d->pty->slaveFd(), 0);
+        if (d->ptyChannels & StdinChannel)
+            dup2(d->pty->slaveFd(), 0);
 
-    if (d->ptyChannels & StdoutChannel)
-        dup2(d->pty->slaveFd(), 1);
+        if (d->ptyChannels & StdoutChannel)
+            dup2(d->pty->slaveFd(), 1);
 
-    if (d->ptyChannels & StderrChannel)
-        dup2(d->pty->slaveFd(), 2);
-
-    KProcess::setupChildProcess();
+        if (d->ptyChannels & StderrChannel)
+            dup2(d->pty->slaveFd(), 2);
+    });
 }
 
 //#include "kptyprocess.moc"

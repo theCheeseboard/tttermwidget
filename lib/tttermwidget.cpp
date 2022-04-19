@@ -16,31 +16,31 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <the-libs_global.h>
-#include <QLayout>
 #include <QBoxLayout>
-#include <QtDebug>
 #include <QDir>
+#include <QLayout>
 #include <QMessageBox>
 #include <QStack>
+#include <QtDebug>
+#include <libcontemporary_global.h>
 #include <signal.h>
 
+#include "ColorScheme.h"
 #include "ColorTables.h"
-#include "Session.h"
+#include "Emulation.h"
+#include "KeyboardTranslator.h"
 #include "Screen.h"
 #include "ScreenWindow.h"
-#include "Emulation.h"
-#include "TerminalDisplay.h"
-#include "KeyboardTranslator.h"
-#include "ColorScheme.h"
 #include "SearchBar.h"
+#include "Session.h"
+#include "TerminalDisplay.h"
 #include "tttermwidget.h"
 
 #ifdef Q_OS_MACOS
-// Qt does not support fontconfig on macOS, so we need to use a "real" font name.
-#define DEFAULT_FONT_FAMILY                   "Menlo"
+    // Qt does not support fontconfig on macOS, so we need to use a "real" font name.
+    #define DEFAULT_FONT_FAMILY "Menlo"
 #else
-#define DEFAULT_FONT_FAMILY                   "Monospace"
+    #define DEFAULT_FONT_FAMILY "Monospace"
 #endif
 
 #define STEP_ZOOM 1
@@ -48,26 +48,24 @@
 using namespace Konsole;
 
 void* createTermWidget(int startnow, void* parent) {
-    return (void*) new TTTermWidget(startnow, (QWidget*)parent);
+    return (void*) new TTTermWidget(startnow, (QWidget*) parent);
 }
 
 class TermWidgetImpl {
+    public:
+        TermWidgetImpl(bool connectPtyData, QWidget* parent = nullptr);
 
-public:
-    TermWidgetImpl(bool connectPtyData, QWidget* parent = nullptr);
+        TerminalDisplay* m_terminalDisplay;
+        Session* m_session;
 
-    TerminalDisplay* m_terminalDisplay;
-    Session* m_session;
-
-    Session* createSession(bool connectPtyData, QWidget* parent);
-    TerminalDisplay* createTerminalDisplay(Session* session, QWidget* parent);
+        Session* createSession(bool connectPtyData, QWidget* parent);
+        TerminalDisplay* createTerminalDisplay(Session* session, QWidget* parent);
 };
 
 TermWidgetImpl::TermWidgetImpl(bool connectPtyData, QWidget* parent) {
     this->m_session = createSession(connectPtyData, parent);
     this->m_terminalDisplay = createTerminalDisplay(this->m_session, parent);
 }
-
 
 Session* TermWidgetImpl::createSession(bool connectPtyData, QWidget* parent) {
     Session* session = new Session(connectPtyData, parent);
@@ -81,11 +79,9 @@ Session* TermWidgetImpl::createSession(bool connectPtyData, QWidget* parent) {
      * By setting it to $SHELL right away we actually make the first filecheck obsolete.
      * But as iam not sure if you want to do anything else ill just let both checks in and set this to $SHELL anyway.
      */
-    //session->setProgram("/bin/bash");
+    // session->setProgram("/bin/bash");
 
     session->setProgram(QString::fromLocal8Bit(qgetenv("SHELL")));
-
-
 
     QStringList args = QStringList(QString());
     session->setArguments(args);
@@ -104,7 +100,7 @@ Session* TermWidgetImpl::createSession(bool connectPtyData, QWidget* parent) {
 }
 
 TerminalDisplay* TermWidgetImpl::createTerminalDisplay(Session* session, QWidget* parent) {
-//    TerminalDisplay* display = new TerminalDisplay(this);
+    //    TerminalDisplay* display = new TerminalDisplay(this);
     TerminalDisplay* display = new TerminalDisplay(parent);
 
     display->setBellMode(TerminalDisplay::NotifyBell);
@@ -117,14 +113,13 @@ TerminalDisplay* TermWidgetImpl::createTerminalDisplay(Session* session, QWidget
     return display;
 }
 
-
-TTTermWidget::TTTermWidget(int startnow, bool connectPtyData, QWidget* parent)
-    : QWidget(parent) {
+TTTermWidget::TTTermWidget(int startnow, bool connectPtyData, QWidget* parent) :
+    QWidget(parent) {
     init(connectPtyData, startnow);
 }
 
-TTTermWidget::TTTermWidget(QWidget* parent)
-    : QWidget(parent) {
+TTTermWidget::TTTermWidget(QWidget* parent) :
+    QWidget(parent) {
     init(true, 1);
 }
 
@@ -154,12 +149,16 @@ void TTTermWidget::search(bool forwards, bool next) {
         m_impl->m_terminalDisplay->screenWindow()->screen()->getSelectionStart(startColumn, startLine);
     }
 
-    //qDebug() << "current selection starts at: " << startColumn << startLine;
-    //qDebug() << "current cursor position: " << m_impl->m_terminalDisplay->screenWindow()->cursorPosition();
+    // qDebug() << "current selection starts at: " << startColumn << startLine;
+    // qDebug() << "current cursor position: " << m_impl->m_terminalDisplay->screenWindow()->cursorPosition();
 
-    QRegExp regExp(m_searchBar->searchText());
-    regExp.setPatternSyntax(m_searchBar->useRegularExpression() ? QRegExp::RegExp : QRegExp::FixedString);
-    regExp.setCaseSensitivity(m_searchBar->matchCase() ? Qt::CaseSensitive : Qt::CaseInsensitive);
+    QRegularExpression regExp;
+    if (m_searchBar->useRegularExpression()) {
+        regExp.setPattern(m_searchBar->searchText());
+    } else {
+        regExp.setPattern(QRegularExpression::escape(m_searchBar->searchText()));
+    }
+    if (!m_searchBar->matchCase()) regExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
     HistorySearch* historySearch =
         new HistorySearch(m_impl->m_session->emulation(), regExp, forwards, startColumn, startLine, this);
@@ -169,10 +168,9 @@ void TTTermWidget::search(bool forwards, bool next) {
     historySearch->search();
 }
 
-
 void TTTermWidget::matchFound(int startColumn, int startLine, int endColumn, int endLine) {
     ScreenWindow* sw = m_impl->m_terminalDisplay->screenWindow();
-    //qDebug() << "Scroll to" << startLine;
+    // qDebug() << "Scroll to" << startLine;
     sw->scrollTo(startLine);
     sw->setTrackOutput(false);
     sw->notifyOutputChanged();
@@ -216,8 +214,7 @@ QSize TTTermWidget::sizeHint() const {
     return size;
 }
 
-void TTTermWidget::setTerminalSizeHint(bool enabled)
-{
+void TTTermWidget::setTerminalSizeHint(bool enabled) {
     m_impl->m_terminalDisplay->setTerminalSizeHint(enabled);
 }
 
@@ -226,7 +223,7 @@ bool TTTermWidget::terminalSizeHint() {
 }
 
 void TTTermWidget::startShellProgram() {
-    if ( m_impl->m_session->isRunning() ) {
+    if (m_impl->m_session->isRunning()) {
         return;
     }
 
@@ -234,19 +231,19 @@ void TTTermWidget::startShellProgram() {
 }
 
 void TTTermWidget::startTerminalTeletype() {
-    if ( m_impl->m_session->isRunning() ) {
+    if (m_impl->m_session->isRunning()) {
         return;
     }
 
     m_impl->m_session->runEmptyPTY();
     // redirect data from TTY to external recipient
-    connect( m_impl->m_session->emulation(), SIGNAL(sendData(const char*, int)),
-        this, SIGNAL(sendData(const char*, int)) );
+    connect(m_impl->m_session->emulation(), SIGNAL(sendData(const char*, int)),
+        this, SIGNAL(sendData(const char*, int)));
 }
 
 void TTTermWidget::init(bool connectPtyData, int startnow) {
     m_layout = new QVBoxLayout();
-    m_layout->setMargin(0);
+    m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(0);
     setLayout(m_layout);
 
@@ -289,8 +286,8 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
         m_impl->m_session->run();
     }
 
-    this->setFocus( Qt::OtherFocusReason );
-    this->setFocusPolicy( Qt::WheelFocus );
+    this->setFocus(Qt::OtherFocusReason);
+    this->setFocusPolicy(Qt::WheelFocus);
     m_impl->m_terminalDisplay->resize(this->size());
 
     this->setFocusProxy(m_impl->m_terminalDisplay);
@@ -301,8 +298,10 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
     connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()),
         this, SIGNAL(termLostFocus()));
     connect(m_impl->m_terminalDisplay, &TerminalDisplay::keyPressedSignal, this,
-        [this](QKeyEvent*e, bool) { Q_EMIT termKeyPressed(e); });
-//    m_impl->m_terminalDisplay->setSize(80, 40);
+        [this](QKeyEvent* e, bool) {
+        Q_EMIT termKeyPressed(e);
+    });
+    //    m_impl->m_terminalDisplay->setSize(80, 40);
 
     QFont font = QApplication::font();
     font.setFamily(QLatin1String(DEFAULT_FONT_FAMILY));
@@ -323,12 +322,10 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
     connect(m_impl->m_session, &Session::cursorChanged, this, &TTTermWidget::cursorChanged);
 }
 
-
 TTTermWidget::~TTTermWidget() {
     delete m_impl;
     emit destroyed();
 }
-
 
 void TTTermWidget::setTerminalFont(const QFont& font) {
     m_impl->m_terminalDisplay->setVTFont(font);
@@ -346,9 +343,8 @@ void TTTermWidget::setTerminalBackgroundImage(const QString& backgroundImage) {
     m_impl->m_terminalDisplay->setBackgroundImage(backgroundImage);
 }
 
-void QTermWidget::setTerminalBackgroundMode(int mode)
-{
-    m_impl->m_terminalDisplay->setBackgroundMode((Konsole::BackgroundMode)mode);
+void TTTermWidget::setTerminalBackgroundMode(int mode) {
+    m_impl->m_terminalDisplay->setBackgroundMode((Konsole::BackgroundMode) mode);
 }
 
 void TTTermWidget::setShellProgram(const QString& program) {
@@ -401,8 +397,8 @@ void TTTermWidget::setColorScheme(const QString& origName) {
 
     const bool isFile = QFile::exists(origName);
     const QString& name = isFile ?
-        QFileInfo(origName).baseName() :
-        origName;
+                              QFileInfo(origName).baseName() :
+                              origName;
 
     // avoid legacy (int) solution
     if (!availableColorSchemes().contains(name)) {
@@ -410,9 +406,9 @@ void TTTermWidget::setColorScheme(const QString& origName) {
             if (ColorSchemeManager::instance()->loadCustomColorScheme(origName))
                 cs = ColorSchemeManager::instance()->findColorScheme(name);
             else
-                qWarning () << Q_FUNC_INFO
-                    << "cannot load color scheme from"
-                    << origName;
+                qWarning() << Q_FUNC_INFO
+                           << "cannot load color scheme from"
+                           << origName;
         }
 
         if (!cs)
@@ -420,7 +416,7 @@ void TTTermWidget::setColorScheme(const QString& origName) {
     } else
         cs = ColorSchemeManager::instance()->findColorScheme(name);
 
-    if (! cs) {
+    if (!cs) {
         QMessageBox::information(this,
             tr("Color Scheme Error"),
             tr("Cannot load color scheme: %1").arg(name));
@@ -466,19 +462,18 @@ void TTTermWidget::setHistorySize(int lines) {
     }
 }
 
-int QTermWidget::historySize() const
-{
+int TTTermWidget::historySize() const {
     const HistoryType& currentHistory = m_impl->m_session->historyType();
 
-     if (currentHistory.isEnabled()) {
-         if (currentHistory.isUnlimited()) {
-             return -1;
-         } else {
-             return currentHistory.maximumLineCount();
-         }
-     } else {
-         return 0;
-     }
+    if (currentHistory.isEnabled()) {
+        if (currentHistory.isUnlimited()) {
+            return -1;
+        } else {
+            return currentHistory.maximumLineCount();
+        }
+    } else {
+        return 0;
+    }
 }
 
 void TTTermWidget::setScrollBarPosition(ScrollBarPosition pos) {
@@ -499,13 +494,12 @@ void TTTermWidget::sendText(const QString& text) {
     m_impl->m_session->sendText(text);
 }
 
-void QTermWidget::sendKeyEvent(QKeyEvent *e)
-{
+void TTTermWidget::sendKeyEvent(QKeyEvent* e) {
     m_impl->m_session->sendKeyEvent(e);
 }
 
 void TTTermWidget::resizeEvent(QResizeEvent*) {
-//qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());
+    // qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());
     m_impl->m_terminalDisplay->resize(this->size());
 
     QStringList env = m_impl->m_session->environment();
@@ -520,7 +514,6 @@ void TTTermWidget::resizeEvent(QResizeEvent*) {
     m_impl->m_session->setEnvironment(env);
 }
 
-
 void TTTermWidget::sessionFinished() {
     emit finished();
 }
@@ -529,13 +522,11 @@ void TTTermWidget::bracketText(QString& text) {
     m_impl->m_terminalDisplay->bracketText(text);
 }
 
-void QTermWidget::disableBracketedPasteMode(bool disable)
-{
+void TTTermWidget::disableBracketedPasteMode(bool disable) {
     m_impl->m_terminalDisplay->disableBracketedPasteMode(disable);
 }
 
-bool QTermWidget::bracketedPasteModeIsDisabled() const
-{
+bool TTTermWidget::bracketedPasteModeIsDisabled() const {
     return m_impl->m_terminalDisplay->bracketedPasteModeIsDisabled();
 }
 
@@ -717,39 +708,34 @@ void TTTermWidget::cursorChanged(Konsole::Emulation::KeyboardCursorShape cursorS
     setBlinkingCursor(blinkingCursorEnabled);
 }
 
-void QTermWidget::setMargin(int margin)
-{
+void TTTermWidget::setMargin(int margin) {
     m_impl->m_terminalDisplay->setMargin(margin);
 }
 
-int QTermWidget::getMargin() const
-{
+int TTTermWidget::getMargin() const {
     return m_impl->m_terminalDisplay->margin();
 }
 
-void QTermWidget::saveHistory(QIODevice *device)
-{
+void TTTermWidget::saveHistory(QIODevice* device) {
     QTextStream stream(device);
     PlainTextDecoder decoder;
     decoder.begin(&stream);
     m_impl->m_session->emulation()->writeToStream(&decoder, 0, m_impl->m_session->emulation()->lineCount());
 }
 
-void QTermWidget::setDrawLineChars(bool drawLineChars)
-{
+void TTTermWidget::setDrawLineChars(bool drawLineChars) {
     m_impl->m_terminalDisplay->setDrawLineChars(drawLineChars);
 }
 
-void QTermWidget::setBoldIntense(bool boldIntense)
-{
+void TTTermWidget::setBoldIntense(bool boldIntense) {
     m_impl->m_terminalDisplay->setBoldIntense(boldIntense);
 }
 
-void QTermWidget::setConfirmMultilinePaste(bool confirmMultilinePaste) {
+void TTTermWidget::setConfirmMultilinePaste(bool confirmMultilinePaste) {
     m_impl->m_terminalDisplay->setConfirmMultilinePaste(confirmMultilinePaste);
 }
 
-void QTermWidget::setTrimPastedTrailingNewlines(bool trimPastedTrailingNewlines) {
+void TTTermWidget::setTrimPastedTrailingNewlines(bool trimPastedTrailingNewlines) {
     m_impl->m_terminalDisplay->setTrimPastedTrailingNewlines(trimPastedTrailingNewlines);
 }
 
@@ -783,7 +769,7 @@ QStringList TTTermWidget::runningProcesses() {
     pids.push(this->getShellPID());
     while (pids.count() != 0) {
         int pid = pids.pop();
-        //Get the name of this process
+        // Get the name of this process
         QFile status(QString("/proc/%1/status").arg(pid));
         status.open(QFile::ReadOnly);
         QString statusFile = status.readAll();
@@ -798,7 +784,7 @@ QStringList TTTermWidget::runningProcesses() {
             }
         }
 
-        //Get the children of this process
+        // Get the children of this process
         QFile children(QString("/proc/%1/task/%1/children").arg(pid));
         children.open(QFile::ReadOnly);
         QString childrenFile = children.readAll();

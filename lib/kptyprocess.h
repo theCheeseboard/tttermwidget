@@ -54,124 +54,114 @@ class KPtyProcessPrivate;
  *
  * @author Oswald Buddenhagen <ossi@kde.org>
  */
-class KPtyProcess : public KProcess
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(KPtyProcess)
+class KPtyProcess : public KProcess {
+        Q_OBJECT
+        Q_DECLARE_PRIVATE(KPtyProcess)
 
-public:
-    enum PtyChannelFlag {
-        NoChannels = 0, /**< The PTY is not connected to any channel. */
-        StdinChannel = 1, /**< Connect PTY to stdin. */
-        StdoutChannel = 2, /**< Connect PTY to stdout. */
-        StderrChannel = 4, /**< Connect PTY to stderr. */
-        AllOutputChannels = 6, /**< Connect PTY to all output channels. */
-        AllChannels = 7 /**< Connect PTY to all channels. */
-    };
+    public:
+        enum PtyChannelFlag {
+            NoChannels = 0,        /**< The PTY is not connected to any channel. */
+            StdinChannel = 1,      /**< Connect PTY to stdin. */
+            StdoutChannel = 2,     /**< Connect PTY to stdout. */
+            StderrChannel = 4,     /**< Connect PTY to stderr. */
+            AllOutputChannels = 6, /**< Connect PTY to all output channels. */
+            AllChannels = 7        /**< Connect PTY to all channels. */
+        };
 
-    Q_DECLARE_FLAGS(PtyChannels, PtyChannelFlag)
+        Q_DECLARE_FLAGS(PtyChannels, PtyChannelFlag)
 
-    /**
-     * Constructor
-     */
-    explicit KPtyProcess(QObject *parent = nullptr);
+        /**
+         * Constructor
+         */
+        explicit KPtyProcess(QObject* parent = nullptr);
 
-    /**
-     * Construct a process using an open pty master.
-     *
-     * @param ptyMasterFd an open pty master file descriptor.
-     *   The process does not take ownership of the descriptor;
-     *   it will not be automatically closed at any point.
-     */
-    KPtyProcess(int ptyMasterFd, QObject *parent = nullptr);
+        /**
+         * Construct a process using an open pty master.
+         *
+         * @param ptyMasterFd an open pty master file descriptor.
+         *   The process does not take ownership of the descriptor;
+         *   it will not be automatically closed at any point.
+         */
+        KPtyProcess(int ptyMasterFd, QObject* parent = nullptr);
 
-    /**
-     * Destructor
-     */
-    ~KPtyProcess() override;
+        /**
+         * Destructor
+         */
+        ~KPtyProcess() override;
 
-    /**
-     * Set to which channels the PTY should be assigned.
-     *
-     * This function must be called before starting the process.
-     *
-     * @param channels the output channel handling mode
-     */
-    void setPtyChannels(PtyChannels channels);
+        /**
+         * Set to which channels the PTY should be assigned.
+         *
+         * This function must be called before starting the process.
+         *
+         * @param channels the output channel handling mode
+         */
+        void setPtyChannels(PtyChannels channels);
 
-    bool isRunning() const
-    {
-        bool rval;
-        (processId() > 0) ? rval= true : rval= false;
-        return rval;
+        bool isRunning() const {
+            bool rval;
+            (processId() > 0) ? rval = true : rval = false;
+            return rval;
+        }
+        /**
+         * Query to which channels the PTY is assigned.
+         *
+         * @return the output channel handling mode
+         */
+        PtyChannels ptyChannels() const;
 
-    }
-    /**
-     * Query to which channels the PTY is assigned.
-     *
-     * @return the output channel handling mode
-     */
-    PtyChannels ptyChannels() const;
+        /**
+         * Set whether to register the process as a TTY login in utmp.
+         *
+         * Utmp is disabled by default.
+         * It should enabled for interactively fed processes, like terminal
+         * emulations.
+         *
+         * This function must be called before starting the process.
+         *
+         * @param value whether to register in utmp.
+         */
+        void setUseUtmp(bool value);
 
-    /**
-     * Set whether to register the process as a TTY login in utmp.
-     *
-     * Utmp is disabled by default.
-     * It should enabled for interactively fed processes, like terminal
-     * emulations.
-     *
-     * This function must be called before starting the process.
-     *
-     * @param value whether to register in utmp.
-     */
-    void setUseUtmp(bool value);
+        /**
+         * Get whether to register the process as a TTY login in utmp.
+         *
+         * @return whether to register in utmp
+         */
+        bool isUseUtmp() const;
 
-    /**
-     * Get whether to register the process as a TTY login in utmp.
-     *
-     * @return whether to register in utmp
-     */
-    bool isUseUtmp() const;
+        /**
+         * Get the PTY device of this process.
+         *
+         * @return the PTY device
+         */
+        KPtyDevice* pty() const;
 
-    /**
-     * Get the PTY device of this process.
-     *
-     * @return the PTY device
-     */
-    KPtyDevice *pty() const;
+    private:
+        Q_PRIVATE_SLOT(d_func(), void _k_onStateChanged(QProcess::ProcessState))
 
-protected:
-    /**
-     * @reimp
-     */
-    void setupChildProcess() override;
-
-private:
-    Q_PRIVATE_SLOT(d_func(), void _k_onStateChanged(QProcess::ProcessState))
+        void initChildProcess();
 };
-
 
 //////////////////
 // private data //
 //////////////////
 
 class KPtyProcessPrivate : public KProcessPrivate {
-public:
-    KPtyProcessPrivate() :
-        ptyChannels(KPtyProcess::NoChannels),
-        addUtmp(false)
-    {
-    }
+    public:
+        KPtyProcessPrivate() :
+            ptyChannels(KPtyProcess::NoChannels),
+            addUtmp(false) {
+        }
 
-    void _k_onStateChanged(QProcess::ProcessState newState)
-    {
-        if (newState == QProcess::NotRunning && addUtmp)
-            pty->logout();
-    }
+        void _k_onStateChanged(QProcess::ProcessState newState) {
+            if (newState == QProcess::NotRunning && addUtmp)
+                pty->logout();
+        }
 
-    KPtyDevice *pty;
-    KPtyProcess::PtyChannels ptyChannels;
-    bool addUtmp : 1;
+        KPtyDevice* pty;
+        KPtyProcess::PtyChannels ptyChannels;
+        bool addUtmp: 1;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KPtyProcess::PtyChannels)

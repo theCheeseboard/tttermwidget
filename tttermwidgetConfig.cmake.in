@@ -10,7 +10,7 @@ define_property(TARGET PROPERTY CNTP_DATA_SUBDIR
     BRIEF_DOCS "Path within data directory to place standard data (usually the application name)"
     FULL_DOCS "Path within data directory to place standard data (usually the application name)")
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets DBus Svg Network Multimedia PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core5Compat)
 cntp_find_pkgconfig(Utf8Proc libutf8proc)
 
 check_required_components(tttermwidget)

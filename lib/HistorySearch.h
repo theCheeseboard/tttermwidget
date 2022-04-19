@@ -17,14 +17,15 @@
     02110-1301  USA.
 */
 #ifndef TASK_H
-#define	TASK_H
+#define TASK_H
 
+#include <QMap>
 #include <QObject>
 #include <QPointer>
-#include <QMap>
+#include <QRegularExpression>
 
-#include "Session.h"
 #include "ScreenWindow.h"
+#include "Session.h"
 
 #include "Emulation.h"
 #include "TerminalCharacterDecoder.h"
@@ -33,38 +34,35 @@ using namespace Konsole;
 
 typedef QPointer<Emulation> EmulationPtr;
 
-class HistorySearch : public QObject
-{
-    Q_OBJECT
+class HistorySearch : public QObject {
+        Q_OBJECT
 
-public:
-    explicit HistorySearch(EmulationPtr emulation, const QRegExp& regExp, bool forwards,
-                           int startColumn, int startLine, QObject* parent);
+    public:
+        explicit HistorySearch(EmulationPtr emulation, const QRegularExpression& regExp, bool forwards,
+            int startColumn, int startLine, QObject* parent);
 
-    ~HistorySearch() override;
+        ~HistorySearch() override;
 
-    void search();
+        void search();
 
-signals:
-    void matchFound(int startColumn, int startLine, int endColumn, int endLine);
-    void noMatchFound();
+    signals:
+        void matchFound(int startColumn, int startLine, int endColumn, int endLine);
+        void noMatchFound();
 
-private:
-    bool search(int startColumn, int startLine, int endColumn, int endLine);
-    int findLineNumberInString(QList<int> linePositions, int position);
+    private:
+        bool search(int startColumn, int startLine, int endColumn, int endLine);
+        int findLineNumberInString(QList<int> linePositions, int position);
 
+        EmulationPtr m_emulation;
+        QRegularExpression m_regExp;
+        bool m_forwards;
+        int m_startColumn;
+        int m_startLine;
 
-    EmulationPtr m_emulation;
-    QRegExp m_regExp;
-    bool m_forwards;
-    int m_startColumn;
-    int m_startLine;
-
-    int m_foundStartColumn;
-    int m_foundStartLine;
-    int m_foundEndColumn;
-    int m_foundEndLine;
+        int m_foundStartColumn;
+        int m_foundStartLine;
+        int m_foundEndColumn;
+        int m_foundEndLine;
 };
 
-#endif	/* TASK_H */
-
+#endif /* TASK_H */
