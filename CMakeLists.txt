@@ -55,7 +55,10 @@ set(PUBLIC_HEADERS
     lib/KeyboardTranslator.h
     lib/tttermwidget_export.h)
 
-add_library(tttermwidget SHARED ${SOURCES} ${HEADERS} ${PUBLIC_HEADERS})
+file(GLOB KBLAYOUTS lib/kb-layouts/*)
+file(GLOB COLORSCHEMES lib/color-schemes/*)
+
+add_library(tttermwidget SHARED ${SOURCES} ${HEADERS} ${PUBLIC_HEADERS} ${KBLAYOUTS} ${COLORSCHEMES})
 
 cntp_init(tttermwidget 17)
 cntp_target_public_headers(tttermwidget
@@ -79,11 +82,35 @@ target_compile_definitions(tttermwidget PRIVATE
     HAVE_SYS_TIME_H
     QT_NO_FOREACH
     tttermwidget_EXPORTS
-
-    KB_LAYOUT_DIR="${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/kb-layouts"
-    COLORSCHEMES_DIR="${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/color-schemes"
 )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(KB_LAYOUT_DIR ${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/kb-layouts)
+    set(COLORSCHEMES_DIR ${CMAKE_INSTALL_FULL_DATADIR}/tttermwidget/color-schemes)
+
+    target_compile_definitions(tttermwidget PRIVATE
+        KB_LAYOUT_DIR="${KB_LAYOUT_DIR}"
+        COLORSCHEMES_DIR="${COLORSCHEMES_DIR}"
+    )
+
+    install(FILES ${KBLAYOUTS}
+        DESTINATION ${KB_LAYOUT_DIR})
+    install(FILES ${COLORSCHEMES}
+        DESTINATION ${COLORSCHEMES_DIR})
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_compile_definitions(tttermwidget PRIVATE HAVE_UTMPX UTMPX_COMPAT)
+
+    foreach(file ${KBLAYOUTS})
+        set_source_files_properties(${file} PROPERTIES
+            MACOSX_PACKAGE_LOCATION Resources/kb-layouts)
+    endforeach()
+    foreach(file ${COLORSCHEMES})
+        set_source_files_properties(${file} PROPERTIES
+            MACOSX_PACKAGE_LOCATION Resources/color-schemes)
+    endforeach()
+endif()
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKECONFIG_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/tttermwidget.framework/Resources/CMake)

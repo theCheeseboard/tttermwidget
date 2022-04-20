@@ -24,7 +24,7 @@ QString get_kb_layout_dir() {
     QString k;
 #ifdef Q_OS_MAC
     // Find in the .app bundle
-    k = getBundleLocation(QLatin1String(KB_LAYOUT_DIR));
+    k = QDir(tApplication::macOSBundlePath("com.vicr123.tttermwidget")).absoluteFilePath("Resources/kb-layouts");
 #else
     k = KB_LAYOUT_DIR;
 #endif
@@ -76,7 +76,7 @@ const QStringList get_color_schemes_dirs() {
     QString k;
 #ifdef Q_OS_MAC
     // Find in the .app bundle
-    k = getBundleLocation(QLatin1String(COLORSCHEMES_DIR));
+    k = QDir(tApplication::macOSBundlePath("com.vicr123.tttermwidget")).absoluteFilePath("Resources/color-schemes");
 #else
     k = COLORSCHEMES_DIR;
 #endif

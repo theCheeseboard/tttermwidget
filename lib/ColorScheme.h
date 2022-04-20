@@ -238,6 +238,8 @@ public:
      */
     ~ColorSchemeManager();
 
+    QStringList colorSchemeDirs() const;
+
     /**
      * Returns the default color scheme for Konsole
      */

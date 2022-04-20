@@ -429,6 +429,12 @@ ColorSchemeManager::~ColorSchemeManager() {
         delete iter.value();
     }
 }
+
+QStringList ColorSchemeManager::colorSchemeDirs() const
+{
+    return get_color_schemes_dirs();
+}
+
 void ColorSchemeManager::loadAllColorSchemes() {
     // qDebug() << "loadAllColorSchemes";
     int failed = 0;

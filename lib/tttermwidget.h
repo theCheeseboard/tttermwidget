@@ -258,6 +258,8 @@ class TTTERMWIDGET_EXPORT TTTermWidget : public QWidget {
 
         void setScrollOnKeypress(bool scrollOnKeypress);
 
+        static QStringList colorSchemeDirs();
+
         int fontHeight();
     signals:
         void finished();

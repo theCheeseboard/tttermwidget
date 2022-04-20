@@ -16,6 +16,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <tapplication.h>
 #include <QBoxLayout>
 #include <QDir>
 #include <QLayout>
@@ -250,7 +251,7 @@ void TTTermWidget::init(bool connectPtyData, int startnow) {
     // translations
     m_translator = new QTranslator();
 #if defined(Q_OS_MAC)
-    m_translator->load(QLocale::system().name(), macOSBundlePath() + "/Contents/translations/");
+    m_translator->load(QLocale::system().name(), tApplication::macOSBundlePath() + "/Contents/translations/");
 #elif defined(Q_OS_LINUX)
     m_translator->load(QLocale::system().name(), "/usr/share/tttermwidget/translations");
 #endif
@@ -490,6 +491,11 @@ void TTTermWidget::setScrollOnKeypress(bool scrollOnKeypress) {
     m_impl->m_terminalDisplay->setScrollOnKeypress(scrollOnKeypress);
 }
 
+QStringList TTTermWidget::colorSchemeDirs()
+{
+    return ColorSchemeManager::instance()->colorSchemeDirs();
+}
+
 void TTTermWidget::sendText(const QString& text) {
     m_impl->m_session->sendText(text);
 }
@@ -499,11 +505,10 @@ void TTTermWidget::sendKeyEvent(QKeyEvent* e) {
 }
 
 void TTTermWidget::resizeEvent(QResizeEvent*) {
-    // qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());
     m_impl->m_terminalDisplay->resize(this->size());
 
     QStringList env = m_impl->m_session->environment();
-    for (QString str : env) {
+    for (const QString &str : env) {
         if (str.startsWith("LINES") || str.startsWith("COLUMNS")) {
             env.removeOne(str);
         }
