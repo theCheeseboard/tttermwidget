@@ -93,9 +93,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         COLORSCHEMES_DIR="${COLORSCHEMES_DIR}"
     )
 
-    install(FILES ${KBLAYOUTS}
+    install(DIRECTORY lib/kb-layouts/
         DESTINATION ${KB_LAYOUT_DIR})
-    install(FILES ${COLORSCHEMES}
+    install(DIRECTORY lib/color-schemes/
         DESTINATION ${COLORSCHEMES_DIR})
 endif()
 
