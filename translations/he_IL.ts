@@ -32,22 +32,22 @@
       <source>Un-named Color Scheme</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>פתח קישור</translation>
       <location filename="../lib/Filter.cpp" line="518" />
       <source>Open Link</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>העתק כתובת קישור</translation>
       <location filename="../lib/Filter.cpp" line="519" />
       <source>Copy Link Address</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>שלח דואר אלקטרוני אל...</translation>
       <location filename="../lib/Filter.cpp" line="523" />
       <source>Send Email To...</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>‏‏העתק כתובת דואר אלקטרוני</translation>
       <location filename="../lib/Filter.cpp" line="524" />
       <source>Copy Email Address</source>
     </message>
@@ -55,22 +55,22 @@
   <context>
     <name>SearchBar</name>
     <message>
-      <translation></translation>
+      <translation>חיפוש</translation>
       <location filename="../lib/SearchBar.ui" line="78" />
       <source>Find</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>התאם רישיות</translation>
       <location filename="../lib/SearchBar.cpp" line="56" />
       <source>Match case</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>ביטוי רגיל</translation>
       <location filename="../lib/SearchBar.cpp" line="62" />
       <source>Regular expression</source>
     </message>
     <message>
-      <translation></translation>
+      <translation>סמן את כל ההתאמות</translation>
       <location filename="../lib/SearchBar.cpp" line="66" />
       <source>Highlight all matches</source>
     </message>
