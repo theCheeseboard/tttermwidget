@@ -1,0 +1,11 @@
+{
+    "name": "tttermwidget",
+    "subprojects": [
+        {
+            "name": "tttermwidget Desktop",
+            "type": "qt",
+            "path": "/translations/{lang}.ts",
+            "baseLang": "en_US"
+        }
+    ]
+}
