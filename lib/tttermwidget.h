@@ -229,6 +229,7 @@ class TTTERMWIDGET_EXPORT TTTermWidget : public QWidget {
 
         QString title() const;
         QString icon() const;
+        QString workingDirectory() const;
 
         /** True if the title() or icon() was (ever) changed by the session. */
         bool isTitleChanged() const;

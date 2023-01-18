@@ -278,7 +278,7 @@ void Session::run() {
      */
     int result = _shellProcess->start(exec,
         arguments,
-        _environment << backgroundColorHint,
+        _environment << backgroundColorHint << "VTE_VERSION=7002",
         windowId(),
         _addToUtmp);
 
@@ -321,6 +321,14 @@ void Session::setUserTitle(int what, const QString& caption) {
         _isTitleChanged = true;
         if (_iconText != caption) {
             _iconText = caption;
+            modified = true;
+        }
+    }
+
+    if (what == 7) {
+        _isTitleChanged = true;
+        if (_pwd != caption) {
+            _pwd = caption;
             modified = true;
         }
     }
@@ -633,6 +641,14 @@ QString Session::iconName() const {
 
 QString Session::iconText() const {
     return _iconText;
+}
+
+QString Session::pwd() const
+{
+    if (_pwd.isEmpty()) return "";
+    auto url = QUrl(_pwd);
+    if (url.scheme() != "file") return "";
+    return url.path();
 }
 
 bool Session::isTitleChanged() const {
