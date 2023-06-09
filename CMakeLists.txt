@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.4.0)
 
 project(tttermwidget VERSION 1.0.0 LANGUAGES CXX)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets DBus Core5Compat)
+find_package(QT REQUIRED NAMES Qt6)
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets DBus Core5Compat)
 find_package(libcontemporary)
 cntp_find_pkgconfig(Utf8Proc libutf8proc)
 
@@ -60,7 +62,7 @@ file(GLOB COLORSCHEMES lib/color-schemes/*)
 
 add_library(tttermwidget SHARED ${SOURCES} ${HEADERS} ${PUBLIC_HEADERS} ${KBLAYOUTS} ${COLORSCHEMES})
 
-cntp_init(tttermwidget 17)
+cntp_init(tttermwidget 20)
 cntp_target_public_headers(tttermwidget
     DESTINATION_DIRECTORY tttermwidget
     HEADERS ${PUBLIC_HEADERS})
@@ -70,7 +72,7 @@ set_target_properties(tttermwidget PROPERTIES
         MACOSX_FRAMEWORK_IDENTIFIER com.vicr123.tttermwidget
         VERSION 1.0.0)
 
-target_link_libraries(tttermwidget Qt6::Widgets Qt6::DBus Qt6::Core5Compat libcontemporary)
+target_link_libraries(tttermwidget Qt::Widgets Qt::DBus Qt::Core5Compat libcontemporary)
 
 IF(${Utf8Proc_FOUND})
     target_link_libraries(tttermwidget PkgConfig::Utf8Proc)
