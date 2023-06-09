@@ -4,23 +4,22 @@ Terminal Emulator used in theTerminal
 tttermwidget is derived from the work of [QTermWidget](https://github.com/lxqt/qtermwidget).
 
 ## Dependencies
-- qmake
-- [the-libs](https://github.com/vicr123/the-libs)
+- [libcontemporary](https://github.com/theCheeseboard/libcontemporary)
 This project is licensed under the terms of the [GPLv2](https://www.gnu.org/licenses/gpl-2.0.en.html) or any later version. See the LICENSE file for the full text of the license. Some files are published under compatible licenses:
 
 ## Build
 ```
-qmake
-make
+cmake -B build -S .
+cmake --build build
 ```
 
 ## Install
 ```
-make install
+cmake --install build
 ```
 
 ## Bugs/Feature Requests
-- Report any bugs using the "Issues" tab up there. Alternatively, click [here](https://github.com/vicr123/tttermwidget/issues) to jump straight there. (Thanks!)
+- Report any bugs using the "Issues" tab up there. Alternatively, click [here](https://github.com/theCheeseboard/tttermwidget/issues) to jump straight there. (Thanks!)
 - If you want to request a feature, you can also use the "Issues" tab.
 
 ## Credits
